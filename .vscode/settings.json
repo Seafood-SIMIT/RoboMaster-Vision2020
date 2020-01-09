@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.m": "matlab",
+        "deque": "cpp",
+        "vector": "cpp"
+    }
+}
