@@ -23,7 +23,7 @@ static double areaRatio(const std::vector<cv::Point> &contour, const cv::Rotated
 // 判断轮廓是否为一个灯条
 static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect, BlobPartParam blob_parament) 
 {
-    RotatedRect cur_rect = minAreaRect(armor_contour);
+    RotatedRect cur_rect = minAreaRect(contour);
     Size2f cur_size = cur_rect.size;
     float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
     float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽

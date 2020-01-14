@@ -12,7 +12,10 @@
 // ---------------------------------------------------------------------------------------------------------------------
 struct BlobPartParam 
 {
-    long ARMOR_CONTOUR_AREA_MAX;//装甲板面积最大值
+	int RED_GRAY_THRESH;
+	int BLUE_GRAY_THRESH;
+	int SPLIT_GRAY_THRESH;
+    	long ARMOR_CONTOUR_AREA_MAX;//装甲板面积最大值
 	long ARMOR_CONTOUR_AREA_MIN;//装甲板面积最小值
 	long ARMOR_CONTOUR_LENGTH_MIN;//装甲板长边长度最小值
 	long ARMOR_CONTOUR_WIDTH_MIN;//装甲板长边长度最大值
@@ -21,7 +24,7 @@ struct BlobPartParam
 	float ARMOR_CONTOUR_HW_RATIO_MAX;//装甲板长宽比最大值
 	float ARMOR_CONTOUR_HW_RATIO_MIN;//装甲板长宽比最小值
 	float ARMOR_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
-}
+};
 /******************* 灯条类定义 ***********************/
 class LightBlob {
 public:
@@ -57,10 +60,11 @@ public:
 typedef std::vector<ArmorBox> ArmorBoxes;
 #define BLOB_RED 1
 #define BLOB_BLUE 0
-
-bool findLightBolbsSJTU(Mat &input_img);
-bool findLightBolbsCSDN(Mat &input_img);
-void showLightBlobs(const cv::Mat &input_image,string windows_name,const LightBlobs &light_blobs);
+#define ENEMY_RED 1
+#define ENEMY_BLUE 0
+bool findLightBolbsSJTU(cv::Mat &input_img);
+bool findLightBolbsCSDN(cv::Mat &input_img);
+void showLightBlobs(const cv::Mat &input_image,std::string windows_name,const LightBlobs &light_blobs);
 bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
 void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
 #endif /* _ARMOR_FINDER_H_ */

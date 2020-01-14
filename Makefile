@@ -5,22 +5,22 @@ TARGET := vision
 
 LIBS := MvCameraControl
 
-CAMERA_DIR=codes/Camera
+CAMERA_DIR=./Codes/Camera
 SOURCE_CAMERA_DIR=$(CAMERA_DIR)/src
 
-ARMORFINDER_DIR=codes/ArmorFinder
+ARMORFINDER_DIR=./Codes/ArmorFinder
 SOURCE_ARMORFINDER_DIR=$(ARMORFINDER_DIR)/src
 
-ENERGY_DIR=codes/Enegry
+ENERGY_DIR=./Codes/Enegry
 SOURCE_ENERGY_DIR=$(ENERGY_DIR)/src
 
-PREPOCESS_DIR=codes/Preprocess
+PREPOCESS_DIR=./Codes/Preprocess
 SOURCE_PREPOCESS_DIR=$(PREPOCESS_DIR)/src
 #头文件
-INC := ./ codes/ArmorFinder/include codes/Camera/include codes/Preprocess/include codes/Enegry/include
+INC := ./ ./Codes/ArmorFinder/include ./Codes/Camera/include ./Codes/Preprocess/include ./Codes/Enegry/include
 
 #动态库或静态库文件的相对路径
-LIBSPATH := codes/Camera/lib
+LIBSPATH := ./Codes/Camera/lib
 
 VPATH=$(SOURCE_CAMERA_DIR):$(SOURCE_ARMORFINDER_DIR):$(SOURCE_ENERGY_DIR):$(SOURCE_PREPOCESS_DIR)
 #定义变量pkg表示opencv的包
@@ -31,7 +31,7 @@ PKG = `pkg-config opencv --libs --cflags`
 RM = rm -rf
 
 #编译器为g++
-CC = g++
+CC = g++ -std=c++11
 #编译时的参数配置
 CFLAGS = -g -o 
 #编译时所依赖的通用c++源程序
@@ -64,7 +64,7 @@ clean:
 #将动态库安装到系统路径中。
 .PHONY:add-libraries
 add-libraries:
-	sudo cp codes/Camera/lib/* /usr/local/lib
+	sudo cp ./Codes/Camera/lib/* /usr/local/lib
 
 .PHONY:show
 show:

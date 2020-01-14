@@ -1,4 +1,7 @@
 #include "ArmorFinder.h"
+
+using namespace std;
+using namespace cv;
     /**
      * @author:任天锋
      * @desc:装甲板识别,整理自SJTU
