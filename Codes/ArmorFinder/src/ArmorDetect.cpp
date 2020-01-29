@@ -13,7 +13,7 @@ using namespace cv;
                         light_blob_i.rect.angle - 90;
         float angle_j = light_blob_j.rect.size.width > light_blob_j.rect.size.height ? light_blob_j.rect.angle :
                         light_blob_j.rect.angle - 90;
-        return abs(angle_i - angle_j) < 20;
+        return abs(angle_i - angle_j) < 10;
     }
     // 判断两个灯条的高度差
     static bool heightJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
@@ -61,8 +61,14 @@ using namespace cv;
         return (-120.0 < angle && angle < -60.0) || (60.0 < angle && angle < 120.0);
     }
     //判断是否为一对灯条
-    static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j, uint8_t enemy_color) {
-    return light_blob_i.blob_color == enemy_color &&
+    static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j, uint8_t enemy_color) 
+    {
+        return CuoWeiDuJudge(light_blob_i, light_blob_j) &&
+            lengthRatioJudge(light_blob_i, light_blob_j) &&
+            lengthJudge(light_blob_i, light_blob_j) &&
+            angelJudge(light_blob_i, light_blob_j);
+        /*
+        return light_blob_i.blob_color == enemy_color &&
            light_blob_j.blob_color == enemy_color &&
            lengthRatioJudge(light_blob_i, light_blob_j) &&
            lengthJudge(light_blob_i, light_blob_j) &&
@@ -70,7 +76,7 @@ using namespace cv;
            angelJudge(light_blob_i, light_blob_j) &&
            boxAngleJudge(light_blob_i, light_blob_j) &&
            CuoWeiDuJudge(light_blob_i, light_blob_j);
-
+        */
     }
     /**
      * @func:匹配装甲板,外部调用只需调用该函数即可
@@ -84,8 +90,9 @@ using namespace cv;
                 if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), BLOB_RED)) {
                     continue;
                 }
-                cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
-                cv::Rect2d rect_right = light_blobs.at(static_cast<unsigned long>(j)).rect.boundingRect();
+                cout<<"pair blobs"<<endl;
+                Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
+                Rect2d rect_right = light_blobs.at(static_cast<unsigned long>(j)).rect.boundingRect();
                 double min_x, min_y, max_x, max_y;
                 min_x = fmin(rect_left.x, rect_right.x) - 4;
                 max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width) + 4;
@@ -97,6 +104,7 @@ using namespace cv;
                 }
                 if ((max_y + min_y) / 2 < 120) continue;
                 if ((max_x - min_x) / (max_y - min_y) < 0.8) continue;
+
                 LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
                 armor_boxes.emplace_back(
                         cv::Rect2d(min_x, min_y, max_x - min_x, max_y - min_y),
@@ -107,21 +115,7 @@ using namespace cv;
         }
     return !armor_boxes.empty();
     }
-    //在src上将灯条框出
-     void drawLightBlobs(cv::Mat &src, const LightBlobs &blobs){
-        for (const auto &blob:blobs) {
-            Scalar color(0,255,0);
-            if (blob.blob_color == BLOB_RED)
-                color = Scalar(0, 0, 255);
-            else if (blob.blob_color == BLOB_BLUE)
-                color = Scalar(255, 0, 0);
-            cv::Point2f vertices[4];
-            blob.rect.points(vertices);
-            for (int j = 0; j < 4; j++) {
-                cv::line(src, vertices[j], vertices[(j + 1) % 4], color, 2);
-            }
-        }
-    }
+    
     //在src上将装甲板框出
     void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes) {
         static Mat image2show;
@@ -134,12 +128,12 @@ using namespace cv;
         for (auto &box:armor_boxes) {
             if(box.box_color == BLOB_BLUE) {
                 rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-                drawLightBlobs(image2show, box.light_blobs);
             }else if(box.box_color == BLOB_RED){
                 rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-                drawLightBlobs(image2show, box.light_blobs);
             }
         }
+        namedWindow(windows_name,0);
+        resizeWindow(windows_name,600,400);
         imshow(windows_name, image2show);
         waitKey(10);
     }

@@ -44,7 +44,13 @@ int main(int argc, char *argv[], char **env)
             break;
         }
         }
-        //g_preprocess.run(g_srcImage);
+        //
+        g_preprocess.run(g_srcImage);
+        //namedWindow("bright",0);
+        //resizeWindow("bright",600,400);
+        //imshow("bright",g_srcImage);
+        //waitKey(1);
+        cvtColor(g_srcImage, g_srcImage, COLOR_GRAY2RGB);     //将黑白图像转换成三通道 
         if( lightBox(g_srcImage) == 1 );
         //energy(g_srcImage);
         

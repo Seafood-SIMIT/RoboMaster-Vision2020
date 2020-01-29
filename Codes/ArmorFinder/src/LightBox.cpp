@@ -18,14 +18,7 @@ using namespace std;
 *其他要注意的地方
 **/  
 int lightBox(Mat image)
-{  
-    bool key = true;
-    if(key){
-        findLightBolbsCSDN(image);
-    }else{
-        findLightBolbsSJTU(image);
-    }
-    
-
+{
+    findLightBolbsSJTU(image);
     return 1;
 }
