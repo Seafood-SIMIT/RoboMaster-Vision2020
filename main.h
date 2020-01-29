@@ -2,6 +2,8 @@
 #define MAIN_H_
 //------------------------包含文件和命名空间-------------------  
 #include "opencv2/opencv.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/tracking.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,16 +14,14 @@
 #include "Preprocess.h"
 #include "energy.h"
 
-using namespace cv;
-using namespace std;
-
+typedef cv::TrackerKCF TrackerToUse;                // Tracker类型定义
 
 #define MAX_IMAGE_DATA_SIZE   (1920*1200*3)
 #define SOURCE_CAMERA    1
 #define SOURCE_VIDEO    0
 #define CAMERA_INIT_SUCCESS 1
 #define CAMERA_INIT_FAIL    0
-int lightBox(Mat image);
+int lightBox(cv::Mat image);
 void systemInit();
 //------------------------全局变量定义---------------------
 //变量定义阶段
@@ -39,5 +39,7 @@ unsigned char* pFrameBuf = NULL;
 
 //相机参数
 MV_FRAME_OUT_INFO_EX stInfo;
+
+cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
 
 #endif

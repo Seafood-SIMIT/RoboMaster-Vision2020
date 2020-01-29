@@ -9,6 +9,11 @@
 void Preprocess::run(Mat &src)
 {
     clearWhiteLight(src);
+    cvtColor(src, src, COLOR_GRAY2RGB);     //将黑白图像转换成三通道
+    //namedWindow("bright",0);
+    //resizeWindow("bright",600,400);
+    //imshow("bright",src);
+    //waitKey(1);
 }
 
 void Preprocess::clearWhiteLight(Mat &src)
@@ -22,5 +27,6 @@ void Preprocess::clearWhiteLight(Mat &src)
         src_blue = channels[0];            /*将蓝色提出来，红色是第一个通道*/ 
         addWeighted(src_red, 1, src_blue,-1, 0.0, src);     //将两张图片按比例合成一张图片
     } 
+    
     
 }

@@ -19,6 +19,9 @@ using namespace std;
 **/  
 int lightBox(Mat image)
 {
-    findLightBolbsSJTU(image);
-    return 1;
+    if(findLightBolbsSJTU(image))
+    {
+        return 1;
+    }
+    
 }

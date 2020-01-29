@@ -42,6 +42,8 @@ public:
     LightBlob() = default;
 };
 typedef std::vector<LightBlob> LightBlobs;
+
+/******************* 装甲板类定义　**********************/
 class ArmorBox{
 public:
     cv::Rect2d rect;
@@ -58,6 +60,15 @@ public:
     bool operator<(const ArmorBox &box) const; // 装甲板优先级比较
 };
 typedef std::vector<ArmorBox> ArmorBoxes;
+//
+/********************* 自瞄类定义 **********************/
+class AutoAiming{
+public:
+    AutoAiming();
+    ~AutoAiming() = default;
+
+}
+ArmorBox target_box, last_box;                      // 目标装甲板
 #define BLOB_RED 1
 #define BLOB_BLUE 0
 #define ENEMY_RED 1

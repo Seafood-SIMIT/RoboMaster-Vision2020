@@ -158,14 +158,16 @@ bool findLightBolbsSJTU(Mat &input_img)
     drawLightBlobs(input_img,light_blobs_light);
     if(light_blobs_light.size()>1)
     {
+        
         if(matchArmorBoxes(input_img,light_blobs_light,boxes))
         {
             //cout<<"armorbox detected"<<endl;
+            showArmorBoxes("res",input_img,boxes);
+            //cout<<"draw armorbox"<<endl;
+            return 1;
         }
-        showArmorBoxes("res",input_img,boxes);
-        //cout<<"draw armorbox"<<endl;
     }
-    return  0;
+    return  1;
 }
 
 /**

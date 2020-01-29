@@ -5,12 +5,13 @@
 ------------------------------------------------------*/
 #include "main.h"
 //-----------------------主函数定义------------------------
-
+using namespace cv;
+using namespace std;
 
 int main(int argc, char *argv[], char **env)
 {    	
 	systemInit();
-    Mat g_srcImage;
+    Mat g_srcImage, g_processImage;
     
     while(1)
     {
@@ -45,13 +46,13 @@ int main(int argc, char *argv[], char **env)
         }
         }
         //
-        g_preprocess.run(g_srcImage);
-        //namedWindow("bright",0);
-        //resizeWindow("bright",600,400);
-        //imshow("bright",g_srcImage);
-        //waitKey(1);
-        cvtColor(g_srcImage, g_srcImage, COLOR_GRAY2RGB);     //将黑白图像转换成三通道 
-        if( lightBox(g_srcImage) == 1 );
+        g_processImage = g_srcImage.clone;
+        g_preprocess.run(g_processImage); 
+        if( lightBox(g_processImage) )
+        {
+            tracker = TrackerKCF::create();
+            tracker->init(g_srcImage, target_box.rect);
+        }
         //energy(g_srcImage);
         
         
