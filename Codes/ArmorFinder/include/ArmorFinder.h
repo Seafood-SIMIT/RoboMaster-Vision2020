@@ -67,14 +67,28 @@ public:
     AutoAiming();
     ~AutoAiming() = default;
 
+private:
+    //战车状态定义
+    typedef enum{
+        SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
+    } State; 
+    State state; 
+    //目标装甲板       
+    ArmorBox target_box, last_box;  //目标装甲板 上一个装甲板
+    cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
+
+    int tracking_cnt;
+
+    //函数
+    void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
+    bool ArmorFinder::stateTrackingTarget(cv::Mat &src);
 }
-ArmorBox target_box, last_box;                      // 目标装甲板
+                      // 目标装甲板
 #define BLOB_RED 1
 #define BLOB_BLUE 0
 #define ENEMY_RED 1
 #define ENEMY_BLUE 0
 bool findLightBolbsSJTU(cv::Mat &input_img);
-bool findLightBolbsCSDN(cv::Mat &input_img);
 void showLightBlobs(const cv::Mat &input_image,std::string windows_name,const LightBlobs &light_blobs);
 bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
 void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);

@@ -40,6 +40,8 @@ unsigned char* pFrameBuf = NULL;
 //相机参数
 MV_FRAME_OUT_INFO_EX stInfo;
 
-cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
+/*-----------------------------------------------------*/
+//自瞄程序对象
+AutoAiming auto_aiming;
 
 #endif

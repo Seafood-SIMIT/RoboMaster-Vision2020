@@ -48,11 +48,7 @@ int main(int argc, char *argv[], char **env)
         //
         g_processImage = g_srcImage.clone;
         g_preprocess.run(g_processImage); 
-        if( lightBox(g_processImage) )
-        {
-            tracker = TrackerKCF::create();
-            tracker->init(g_srcImage, target_box.rect);
-        }
+        auto_aiming.run();
         //energy(g_srcImage);
         
         
