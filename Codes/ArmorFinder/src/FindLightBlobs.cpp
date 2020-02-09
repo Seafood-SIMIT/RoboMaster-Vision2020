@@ -9,7 +9,7 @@
 
 using namespace std;
 using namespace cv;
-void drawLightBlobs(cv::Mat &src, const LightBlobs &blobs);
+void drawLightBlobs(cv::Mat &g_srcImage, const LightBlobs &blobs);
 // 轮廓面积和其最小外接矩形面积之比
 static double areaRatio(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
     return cv::contourArea(contour) / rect.size.area();
@@ -88,8 +88,8 @@ bool blobParamInit(BlobPartParam &blob_parament)
     blob_parament.BLOB_CONTOUR_LENGTH_MAX = 50;
     blob_parament.BLOB_CONTOUR_WIDTH_MIN = 0;
     blob_parament.BLOB_CONTOUR_WIDTH_MAX = 30;
-    blob_parament.BLOB_CONTOUR_HW_RATIO_MAX = 20;
-    blob_parament.BLOB_CONTOUR_HW_RATIO_MIN = 8; 
+    blob_parament.BLOB_CONTOUR_HW_RATIO_MAX = 22;
+    blob_parament.BLOB_CONTOUR_HW_RATIO_MIN = 6; 
 }
 /**
 *@author：孙霖
@@ -99,15 +99,14 @@ bool blobParamInit(BlobPartParam &blob_parament)
 *@para:input_img输入图像:
 *@返回：bool
 **/ 
-bool findLightBolbsSJTU(Mat &input_img)
+bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,LightBlobs &light_blobs)
 {
     //变量声明
     BlobPartParam blob_parament;        //灯条相关参数
-    LightBlobs light_blobs;	//储存所有可能灯条
     Mat color_channel;      //颜色通道
-    Mat src_bin_light;     //亮源图和暗原图
+    Mat processImage_bin;     //亮源图和暗原图
     vector<Mat> channels;               //通道数
-    split(input_img, channels);         //通道拆分  
+    split(processImage, channels);         //通道拆分  
     int light_threshold = 150;                //设定亮图片阈值
     int dim_threshold = 140;                  //设定暗图片阈值
     int enemy_color = ENEMY_RED;                //敌人为红
@@ -123,51 +122,38 @@ bool findLightBolbsSJTU(Mat &input_img)
         color_channel = channels[2];        //红色通道是3
     } 
 
+    // 对亮图片进行开闭运算
     //二值化处理
     //亮度阈值    
-    threshold(color_channel, src_bin_light, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道，得到较亮的图片
-
-    // 对亮图片进行开闭运算
-    imagePreProcess(src_bin_light);
-    namedWindow("process",0);
-    resizeWindow("process",600,400);
-    imshow("process", src_bin_light);
-    waitKey(1);
-    //对暗图片进行开闭运算
-    //imagePreProcess(src_bin_dim); 
+    threshold(color_channel, processImage_bin, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道，得到较亮的图片
+    imagePreProcess(processImage_bin);
+    
+    //if(state==TRACKING_STATE)
+    //{
+    //    namedWindow("process",0);
+    //    resizeWindow("process",600,400);
+    //    imshow("process", processImage_bin);
+    //    waitKey(0);
+    //}
+    
     // 使用两个不同的二值化阈值同时进行灯条提取，减少环境光照对二值化这个操作的影响。
     // 同时剔除重复的灯条，剔除冗余计算，即对两次找出来的灯条取交集。
-    vector<vector<Point>> light_contours_light;    //创建存放轮廓的容器 
-    LightBlobs light_blobs_light;                        
+    vector<vector<Point>> light_contours_light;    //创建存放轮廓的容器                       
     vector<Vec4i> hierarchy_light;              //                
-    findContours(src_bin_light, light_contours_light, hierarchy_light, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE); /*在经过二值化的较亮图片中进行轮廓提取*/ 
-    
-    
+    findContours(processImage_bin, light_contours_light, hierarchy_light, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE); /*在经过二值化的较亮图片中进行轮廓提取*/ 
     //对light_contours_light中的轮廓用isValidLightBlob函数进行逐一比对，判断其是否为灯条，并若是将相关的信息存入
     for (int i = 0; i < light_contours_light.size(); i++) 
     {
         RotatedRect rect = minAreaRect(light_contours_light[i]);
         if (isValidLightBlob(light_contours_light[i], rect, blob_parament)) 
         {                         
-            light_blobs_light.emplace_back(
-                    rect, areaRatio(light_contours_light[i], rect), get_blob_color(input_img, rect)
+            light_blobs.emplace_back(
+                    rect, areaRatio(light_contours_light[i], rect), get_blob_color(processImage, rect)
             );
         }
     }
-    cout<<"Blobs after choose "<<light_blobs_light.size()<<endl;
-    drawLightBlobs(input_img,light_blobs_light);
-    if(light_blobs_light.size()>1)
-    {
-        
-        if(matchArmorBoxes(input_img,light_blobs_light,boxes))
-        {
-            //cout<<"armorbox detected"<<endl;
-            showArmorBoxes("res",input_img,boxes);
-            //cout<<"draw armorbox"<<endl;
-            return 1;
-        }
-    }
-    return  1;
+    //cout<<"total blobs number"<<light_blobs.size()<<endl;
+    return light_blobs.size()>1;
 }
 
 /**
@@ -178,26 +164,27 @@ bool findLightBolbsSJTU(Mat &input_img)
 *@para:input_img输入图像;light_blobs已找到的灯条
 **/ 
 //在src上将灯条框出
-void drawLightBlobs(Mat &src, const LightBlobs &blobs)
+void AutoAiming::drawLightBlobs(Mat &g_srcImage, const LightBlobs &light_blobs)
 {
-    for (const auto &blob:blobs) 
+    Mat img2show4blobs=g_srcImage.clone();
+    for (const auto &blob:light_blobs) 
     {
         Scalar color(0,255,0);
         if (blob.blob_color == BLOB_RED)
-            color = Scalar(255, 0, 0);
+            color = Scalar(0, 255, 0);
         else if (blob.blob_color == BLOB_BLUE)
-            color = Scalar(0, 0, 255);
+            color = Scalar(0, 255, 0);
         Point2f vertices[4];
         blob.rect.points(vertices);
         for (int j = 0; j < 4; j++) 
         {
-            line(src, vertices[j], vertices[(j + 1) % 4], color, 2);
+            line(img2show4blobs, vertices[j], vertices[(j + 1) % 4], color, 2);
         }
     }
-    namedWindow("blobs",0);
-    resizeWindow("blobs",600,400);
-    imshow("blobs", src);
-    waitKey(1);
+    //namedWindow("blobs",0);
+    //resizeWindow("blobs",600,400);
+    //imshow("blobs", img2show4blobs);
+    //waitKey(1);
 }
 
 

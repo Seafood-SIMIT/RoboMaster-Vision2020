@@ -2,6 +2,14 @@
     "files.associations": {
         "*.m": "matlab",
         "iostream": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "*.tcc": "cpp",
+        "optional": "cpp",
+        "functional": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp"
     }
 }

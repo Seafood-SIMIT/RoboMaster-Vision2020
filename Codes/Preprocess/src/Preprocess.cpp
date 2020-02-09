@@ -6,26 +6,27 @@
 
 #include "Preprocess.h"
 
-void Preprocess::run(Mat &src)
+void Preprocess::run(Mat &g_processImage)
 {
-    clearWhiteLight(src);
-    cvtColor(src, src, COLOR_GRAY2RGB);     //将黑白图像转换成三通道
-    //namedWindow("bright",0);
-    //resizeWindow("bright",600,400);
-    //imshow("bright",src);
-    //waitKey(1);
+    clearWhiteLight(g_processImage);
+    cvtColor(g_processImage, g_processImage, COLOR_GRAY2RGB);     //将黑白图像转换成三通道
+    /*
+    namedWindow("g_processImage",0);
+    resizeWindow("g_processImage",600,400);
+    imshow("g_processImage",g_processImage);
+    waitKey(1);*/
 }
 
-void Preprocess::clearWhiteLight(Mat &src)
+void Preprocess::clearWhiteLight(Mat &g_processImage)
 {
-    Mat src_blue,src_red;       //红蓝通道图像
-    if (src.type() == CV_8UC3)
+    Mat g_processImage_blue,g_processImage_red;       //红蓝通道图像
+    if (g_processImage.type() == CV_8UC3)
     {
         vector<Mat> channels;                 /*利用vector对象拆分*/
-        split(src, channels);                     /*调用通道拆分函数*/
-        src_red = channels[2];             /*将红色提出来，红色是第三个通道*/   
-        src_blue = channels[0];            /*将蓝色提出来，红色是第一个通道*/ 
-        addWeighted(src_red, 1, src_blue,-1, 0.0, src);     //将两张图片按比例合成一张图片
+        split(g_processImage, channels);                     /*调用通道拆分函数*/
+        g_processImage_red = channels[2];             /*将红色提出来，红色是第三个通道*/   
+        g_processImage_blue = channels[0];            /*将蓝色提出来，红色是第一个通道*/ 
+        addWeighted(g_processImage_red, 1, g_processImage_blue,-1, 0.0, g_processImage);     //将两张图片按比例合成一张图片
     } 
     
     

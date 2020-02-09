@@ -6,7 +6,11 @@
 
 #include <opencv2/opencv.hpp>
 #include <string>
+#include <iostream>
 #include <Eigen/Core>
+#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/tracking.hpp>
+
 //----------------------------------------------------------------------------------------------------------------------
 // 此结构体包括灯条参数
 // ---------------------------------------------------------------------------------------------------------------------
@@ -50,46 +54,50 @@ public:
     LightBlobs light_blobs;
     uint8_t box_color;
     int id;
-    ArmorBox(const cv::Rect &pos, const LightBlobs &blobs, uint8_t color):rect(pos),light_blobs(blobs),box_color(color){};
+    //ArmorBox(const cv::Rect &pos, const LightBlobs &blobs, uint8_t color):rect(pos),light_blobs(blobs),box_color(color){}.
+    explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0);
 
-    cv::Point2f getCenter() const; // 获取装甲板中心
+    /*cv::Point2f getCenter() const; // 获取装甲板中心
     double getBlobsDistance() const; // 获取两个灯条中心间距
     double lengthDistanceRatio() const; // 获取灯条中心距和灯条长度的比值
-    double getBoxDistance() const; // 获取装甲板到摄像头的距离
+    double getBoxDistance() const; // 获取装甲板到摄像头的距离*/
 
-    bool operator<(const ArmorBox &box) const; // 装甲板优先级比较
 };
 typedef std::vector<ArmorBox> ArmorBoxes;
 //
 /********************* 自瞄类定义 **********************/
 class AutoAiming{
-public:
-    AutoAiming();
-    ~AutoAiming() = default;
+private:       
+    cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
+    ArmorBox target_box, last_box;  //目标装甲板 上一个装甲板
+    int tracking_cnt;
+    int contour_area;                                   // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
 
-private:
+    //函数
+    bool stateTrackingTarget(cv::Mat &src);
+    bool findArmorBoxTop(cv::Mat &g_srcImage,cv::Mat &g_processImage,ArmorBox &target_box);
+    bool stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage);
+    bool stateTrackingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage);
+    bool findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &g_processImage,LightBlobs &light_blobs);
+    bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
+    void drawLightBlobs(cv::Mat &g_srcImage, const LightBlobs &blobs);
+    void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
+    void showArmorBox(std::string windows_name, const cv::Mat &g_srcImage, const cv::Rect2d &armor_box);
+public:
     //战车状态定义
     typedef enum{
         SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
-    } State; 
-    State state; 
-    //目标装甲板       
-    ArmorBox target_box, last_box;  //目标装甲板 上一个装甲板
-    cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
+    } State;
+    State state;
 
-    int tracking_cnt;
-
-    //函数
-    void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
-    bool ArmorFinder::stateTrackingTarget(cv::Mat &src);
-}
+    void run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
+};
                       // 目标装甲板
 #define BLOB_RED 1
 #define BLOB_BLUE 0
 #define ENEMY_RED 1
 #define ENEMY_BLUE 0
-bool findLightBolbsSJTU(cv::Mat &input_img);
-void showLightBlobs(const cv::Mat &input_image,std::string windows_name,const LightBlobs &light_blobs);
-bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
-void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
+
+//sunlin out
+
 #endif /* _ARMOR_FINDER_H_ */

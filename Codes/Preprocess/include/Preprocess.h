@@ -12,10 +12,10 @@ using namespace cv;
 class Preprocess
 {
 public:
-    void run(Mat &src);     //run函数，运行
+    void run(Mat &g_processImage);     //run函数，运行
 private:
     void setParamInit();    //设置参数
-    void clearWhiteLight(Mat &src); //  消除日光影响
+    void clearWhiteLight(Mat &g_processImage); //  消除日光影响
 
 
 };

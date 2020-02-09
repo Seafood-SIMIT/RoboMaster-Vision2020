@@ -83,14 +83,15 @@ using namespace cv;
      * @para:src:一帧图像,light_bolbs:灯条存储vector，armor_boxes:装甲板存储vector，匹配到的装甲板存储到此处
      * 
      **/
- bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes){
+ bool AutoAiming::matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes){
         armor_boxes.clear();
         for (int i = 0; i < light_blobs.size() - 1; ++i) {
             for (int j = i + 1; j < light_blobs.size(); ++j) {
                 if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), BLOB_RED)) {
+                    //cout<<"Not pair blobs"<<endl;
                     continue;
                 }
-                cout<<"pair blobs"<<endl;
+                //cout<<"pair blobs"<<endl;
                 Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
                 Rect2d rect_right = light_blobs.at(static_cast<unsigned long>(j)).rect.boundingRect();
                 double min_x, min_y, max_x, max_y;
@@ -99,12 +100,14 @@ using namespace cv;
                 min_y = fmin(rect_left.y, rect_right.y) - 0.5 * (rect_left.height + rect_right.height) / 2.0;
                 max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) +
                         0.5 * (rect_left.height + rect_right.height) / 2.0;
+                
                 if (min_x < 0 || max_x > src.cols || min_y < 0 || max_y > src.rows) {
+                    cout<<"Wrong Size Box"<<endl;
                     continue;
                 }
-                if ((max_y + min_y) / 2 < 120) continue;
+                //if ((max_y + min_y) / 2 < 120) continue;
                 if ((max_x - min_x) / (max_y - min_y) < 0.8) continue;
-
+                
                 LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
                 armor_boxes.emplace_back(
                         cv::Rect2d(min_x, min_y, max_x - min_x, max_y - min_y),
@@ -113,27 +116,45 @@ using namespace cv;
                 );
             }
         }
+    //cout<<"armor boxes number"<<armor_boxes.size()<<endl;
     return !armor_boxes.empty();
     }
     
     //在src上将装甲板框出
-    void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes) {
-        static Mat image2show;
-        if (src.type() == CV_8UC1) {// 黑白图像
-            cvtColor(src, image2show, COLOR_GRAY2RGB);
-        } else if (src.type() == CV_8UC3) { //RGB 彩色
-            image2show = src.clone();
+    void AutoAiming::showArmorBoxes(std::string windows_name, const cv::Mat &g_srcImage, const ArmorBoxes &armor_boxes) {
+        
+        static Mat image2show4boxes;
+        if (g_srcImage.type() == CV_8UC1) {// 黑白图像
+            cvtColor(g_srcImage, image2show4boxes, COLOR_GRAY2RGB);
+        } else if (g_srcImage.type() == CV_8UC3) { //RGB 彩色
+            image2show4boxes = g_srcImage.clone();
         }
 
         for (auto &box:armor_boxes) {
             if(box.box_color == BLOB_BLUE) {
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
+                rectangle(image2show4boxes, box.rect, Scalar(0, 255, 0), 1);
             }else if(box.box_color == BLOB_RED){
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
+                rectangle(image2show4boxes, box.rect, Scalar(0, 255, 0), 1);
             }
         }
         namedWindow(windows_name,0);
         resizeWindow(windows_name,600,400);
-        imshow(windows_name, image2show);
-        waitKey(10);
+        imshow(windows_name, image2show4boxes);
+        waitKey(1);
+    }
+void AutoAiming::showArmorBox(std::string windows_name, const cv::Mat &g_srcImage, const cv::Rect2d &armor_box) {
+        
+        static Mat image2show4box;
+        if (g_srcImage.type() == CV_8UC1) {// 黑白图像
+            cvtColor(g_srcImage, image2show4box, COLOR_GRAY2RGB);
+        } else if (g_srcImage.type() == CV_8UC3) { //RGB 彩色
+            image2show4box = g_srcImage.clone();
+        }
+
+
+        rectangle(image2show4box, armor_box, Scalar(0, 255, 0), 1);
+        namedWindow(windows_name,0);
+        resizeWindow(windows_name,600,400);
+        imshow(windows_name, image2show4box);
+        waitKey(1);
     }

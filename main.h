@@ -2,19 +2,17 @@
 #define MAIN_H_
 //------------------------包含文件和命名空间-------------------  
 #include "opencv2/opencv.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv2/tracking.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <iostream>
 #include "MvCameraControl.h"
 
 //包含自制头文件
 #include "CameraInit.h"
 #include "Preprocess.h"
 #include "energy.h"
-
-typedef cv::TrackerKCF TrackerToUse;                // Tracker类型定义
+#include "ArmorFinder.h"
 
 #define MAX_IMAGE_DATA_SIZE   (1920*1200*3)
 #define SOURCE_CAMERA    1
@@ -26,7 +24,7 @@ void systemInit();
 //------------------------全局变量定义---------------------
 //变量定义阶段
 int g_source_type;
-VideoCapture g_capture;
+VideoCapture g_capture("material/video/rmvideo.MOV");
 Preprocess g_preprocess;    //初始化对象
 
 //extern int nRet;    //相机状态定义
@@ -41,7 +39,5 @@ unsigned char* pFrameBuf = NULL;
 MV_FRAME_OUT_INFO_EX stInfo;
 
 /*-----------------------------------------------------*/
-//自瞄程序对象
-AutoAiming auto_aiming;
 
 #endif

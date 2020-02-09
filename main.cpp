@@ -8,11 +8,14 @@
 using namespace cv;
 using namespace std;
 
+//自瞄程序对象
+
 int main(int argc, char *argv[], char **env)
 {    	
 	systemInit();
     Mat g_srcImage, g_processImage;
-    
+    AutoAiming auto_aiming;
+    auto_aiming.state = AutoAiming::State::SEARCHING_STATE;
     while(1)
     {
         switch(g_source_type)
@@ -41,15 +44,22 @@ int main(int argc, char *argv[], char **env)
         }
         case SOURCE_VIDEO:
         {
-            g_capture>>g_srcImage;
+            g_capture.read(g_srcImage);
             break;
         }
         }
         //
-        g_processImage = g_srcImage.clone;
+        
+        namedWindow("g_srcImage",0);
+        resizeWindow("g_srcImage",600,400);
+        g_processImage = g_srcImage.clone();
         g_preprocess.run(g_processImage); 
-        auto_aiming.run();
+        auto_aiming.run(g_srcImage,g_processImage);
+        imshow("g_srcImage",g_srcImage);
+        waitKey(1);
         //energy(g_srcImage);
+        
+        
         
         
     }
@@ -83,7 +93,8 @@ void systemInit()
     }
     else
     {
-        g_capture.open("material/video/rmvideo.MOV");//视频文件
+        //g_capture.open("material/video/rmvideo.MOV");//视频文件
         //视频读取
+        //g_capture.read()
     }
 }
