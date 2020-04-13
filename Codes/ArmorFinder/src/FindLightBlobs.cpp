@@ -14,9 +14,16 @@ void drawLightBlobs(cv::Mat &g_srcImage, const LightBlobs &blobs);
 static double areaRatio(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
     return cv::contourArea(contour) / rect.size.area();
 }
+// 旋转矩形的长宽比
+static double lw_rate(const cv::RotatedRect &rect) {
+    return rect.size.height > rect.size.width ?
+           rect.size.height / rect.size.width :
+           rect.size.width / rect.size.height;
+}
 // 判断轮廓是否为一个灯条
 static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect, BlobPartParam blob_parament) 
 {
+    /*
     Size2f cur_size = rect.size;
     float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
     float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
@@ -30,6 +37,11 @@ static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::Ro
         return false;
         //长宽比不合适
         }
+        */
+    return (1.2 < lw_rate(rect) && lw_rate(rect) < 10) &&
+           //           (rect.size.area() < 3000) &&
+           ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.4) ||
+            (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.6));
 }
 // 判断灯条颜色(此函数可以有性能优化).
 static uint8_t get_blob_color(const cv::Mat &src, const cv::RotatedRect &blobPos) {
@@ -127,15 +139,15 @@ bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,Li
     //亮度阈值    
     threshold(color_channel, processImage_bin, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道，得到较亮的图片
     imagePreProcess(processImage_bin);
-    
-    //if(state==TRACKING_STATE)
-    //{
-    //    namedWindow("process",0);
-    //    resizeWindow("process",600,400);
-    //    imshow("process", processImage_bin);
-    //    waitKey(0);
-    //}
-    
+    /*
+    if(state==TRACKING_STATE)
+    {
+        namedWindow("process_before_blob",0);
+        resizeWindow("process_before_blob",600,400);
+       imshow("process_before_blob", processImage_bin);
+        waitKey(1);
+    }
+    */
     // 使用两个不同的二值化阈值同时进行灯条提取，减少环境光照对二值化这个操作的影响。
     // 同时剔除重复的灯条，剔除冗余计算，即对两次找出来的灯条取交集。
     vector<vector<Point>> light_contours_light;    //创建存放轮廓的容器                       
@@ -181,10 +193,10 @@ void AutoAiming::drawLightBlobs(Mat &g_srcImage, const LightBlobs &light_blobs)
             line(img2show4blobs, vertices[j], vertices[(j + 1) % 4], color, 2);
         }
     }
-    //namedWindow("blobs",0);
-    //resizeWindow("blobs",600,400);
-    //imshow("blobs", img2show4blobs);
-    //waitKey(1);
+    namedWindow("blobs",0);
+    resizeWindow("blobs",600,400);
+    imshow("blobs", img2show4blobs);
+    waitKey(0);
 }
 
 

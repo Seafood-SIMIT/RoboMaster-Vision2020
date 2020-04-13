@@ -23,12 +23,9 @@ bool save_mark = false;
 bool show_info = false;
 bool run_by_frame = false;
 
-bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage,ArmorBox &box)
+bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box)
 {
     LightBlobs light_blobs;
-    ArmorBoxes armor_boxes;
-    box.rect = cv::Rect2d(0,0,0,0);
-    box.id=-1;
     //寻找所有的灯条
     if(!findLightBolbsSJTU(srcImage,processImage,light_blobs))
     {
@@ -37,29 +34,24 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage,ArmorBo
     }
     //显示所有的灯条
     //cout<<"Blobs after choose "<<light_blobs.size()<<endl;
-    //if (show_light_blobs && state==SEARCHING_STATE) 
-    //{
-    //    drawLightBlobs(srcImage,light_blobs);
-    //}
+    /*if (show_light_blobs && state==SEARCHING_STATE) 
+    {
+        drawLightBlobs(srcImage,light_blobs);
+    }*/
     // 对灯条进行匹配得出装甲板候选区
     if(!matchArmorBoxes(processImage,light_blobs,armor_boxes))
     {
-        //cout<<"armorbox detected"<<endl;
-        //cout<<"draw armorbox"<<endl;
+        //cout<<"No armorbox"<<endl;
         return false;
         //显示所有装甲板
     }
-    
+    //cout<<"armorbox detected"<<endl;
     //if (show_armor_boxes && state==TRACKING_STATE) 
-    if (show_armor_boxes && state==SEARCHING_STATE) 
+    if (show_armor_boxes ) 
     {
-        //showArmorBoxes("boxes", srcImage, armor_boxes);
+        showArmorBoxes("boxes", srcImage, armor_boxes);
     }
     box = armor_boxes[0];
-    if (box.rect == cv::Rect2d(0, 0, 0, 0)) 
-    {
-        return false;
-    }
     return true;
 }
 /**
@@ -72,7 +64,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage,ArmorBo
 **/  
 bool AutoAiming::stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage)
 {
-    if(findArmorBoxTop(g_srcImage,g_processImage,target_box))
+    if(findArmorBoxTop(g_srcImage,g_processImage,box_number))
     {
         return true;
     }

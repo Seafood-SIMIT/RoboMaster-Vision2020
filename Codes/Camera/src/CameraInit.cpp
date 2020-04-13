@@ -4,10 +4,13 @@
 *   功能：  摄像头打开设置关闭
 ------------------------------------------------------*/
 #include "CameraInit.h"
-
+//一帧数据大小
+int nBuffSize = MAX_IMAGE_DATA_SIZE;
+unsigned char* pFrameBuf = NULL;            //相机位置
 //------------------------全局变量-----------------------
 int nRet  = -1 ;
 void* handle  = NULL ;
+float fExposureTime=1000;
 //-------------------------函数区------------------------------
 /**
  * @author      Seafood
@@ -104,7 +107,8 @@ int cameraInit()
         printf("MV_CC_OpenDevice fail! nRet [%x]\n", nRet);
         return -1;
     }
-
+    fExposureTime = 1000;
+    nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
     // 开始取流
 	// start grab image
     nRet = MV_CC_StartGrabbing(handle);

@@ -9,20 +9,60 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
     switch(state)
     {
         case SEARCHING_STATE: 
-            //cout<<"SEARCHING State start!"<<endl;
+            cout<<"SEARCHING State start!"<<endl;
             if( stateSearchingTarget(g_srcImage,g_processImage) )
             {
-                //调高曝光
-                if(true)        //这地方到时候加入分类器
+                fExposureTime = 70000;
+                nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
+                //sleep(1);//延时1秒
+                //waitKey(1000);
+                /*if (MV_OK == nRet)
                 {
-                    tracker = TrackerKCF::create();
-                    tracker->init(g_srcImage, target_box.rect);
-                    //状态改为追踪状态
-                    state = TRACKING_STATE;
-                    //追踪帧数
-                    tracking_cnt = 0;
+                    printf("set exposure 70000 time OK!\n\n");
                 }
+                else
+                {
+                    printf("set exposure 70000 time failed! nRet [%x]\n\n", nRet);
+                }*/
+                //提高曝光
+                //状态改为追踪状态
+                state = CLASSIFYING_STATE;
+                cout<<"Changed into CLASSIFYING STATE"<<endl;
+                
             }
+            break;
+        case CLASSIFYING_STATE:
+            //分类状态
+            cout<<"CLASSIFYING State start!"<<endl;
+            if(numberClassifyRoi(g_srcImage, g_processImage))
+            {
+                jump_state=1;jump_state_count=0;
+                //sleep(1);//延时1秒
+                //waitKey(1000);
+                //初始化追踪器
+                tracker = TrackerKCF::create();
+                //tracker = TrackerMIL::create();
+                tracker->init(g_srcImage, target_box.rect);
+                state = TRACKING_STATE;
+                //追踪帧数
+                tracking_cnt = 0;
+            }
+            
+
+            else
+            {
+                state = SEARCHING_STATE;
+            }
+            fExposureTime=1000;
+            nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
+            /*if (MV_OK == nRet)
+            {
+                printf("set exposure 30 time OK!\n\n");
+            }
+            else
+            {
+                printf("set exposure 30 time failed! nRet [%x]\n\n", nRet);
+            }*/
             break;
         case TRACKING_STATE:
             //cout<<"Tracking State start!"<<endl;   

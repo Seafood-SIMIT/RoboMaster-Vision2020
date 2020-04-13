@@ -6,9 +6,6 @@
 #include <stdio.h>
 #include "MvCameraControl.h"
 
-using namespace cv;
-using namespace std;
-
 #define MAX_IMAGE_DATA_SIZE   (1920*1200*3)
 
 //--------------------------函数定义--------------------
@@ -17,5 +14,8 @@ int cameraExit();
 //------------------------全局变量-----------------------
 extern int nRet  ;
 extern void* handle ;
-
+//一帧数据大小
+extern int nBuffSize;
+extern unsigned char* pFrameBuf;            //相机位置
+extern float fExposureTime;
 #endif

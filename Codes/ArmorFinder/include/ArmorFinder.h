@@ -10,7 +10,10 @@
 #include <Eigen/Core>
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/tracking.hpp>
-
+#include "GetFeature.h"
+#include "MvCameraControl.h"    //相机函数
+#include "CameraInit.h"         //相机初始化函数
+#include <unistd.h> 
 //----------------------------------------------------------------------------------------------------------------------
 // 此结构体包括灯条参数
 // ---------------------------------------------------------------------------------------------------------------------
@@ -70,12 +73,16 @@ class AutoAiming{
 private:       
     cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
     ArmorBox target_box, last_box;  //目标装甲板 上一个装甲板
+    ArmorBoxes armor_boxes;         //探测到的装甲板
+    ArmorBox box_number;                   //数字识别中的目标
+    ArmorBox box_search;
+    
     int tracking_cnt;
     int contour_area;                                   // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
 
     //函数
     bool stateTrackingTarget(cv::Mat &src);
-    bool findArmorBoxTop(cv::Mat &g_srcImage,cv::Mat &g_processImage,ArmorBox &target_box);
+    bool findArmorBoxTop(cv::Mat &g_srcImage,cv::Mat &g_processImage, ArmorBox &box);
     bool stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage);
     bool stateTrackingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage);
     bool findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &g_processImage,LightBlobs &light_blobs);
@@ -83,14 +90,18 @@ private:
     void drawLightBlobs(cv::Mat &g_srcImage, const LightBlobs &blobs);
     void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
     void showArmorBox(std::string windows_name, const cv::Mat &g_srcImage, const cv::Rect2d &armor_box);
+    //数字分类器
+    bool numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage);
 public:
     //战车状态定义
     typedef enum{
-        SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
+        SEARCHING_STATE, CLASSIFYING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;
     State state;
 
     void run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
+
+    int jump_state = 0, jump_state_count = 0;
 };
                       // 目标装甲板
 #define BLOB_RED 1
