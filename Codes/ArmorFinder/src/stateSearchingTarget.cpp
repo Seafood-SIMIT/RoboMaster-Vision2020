@@ -9,19 +9,6 @@
 using namespace cv;
 using namespace std;
 //参数配置
-bool show_armor_box = true;
-bool show_armor_boxes = true;
-bool show_light_blobs = true;
-bool show_origin = false;
-bool run_with_camera = false;
-bool save_video = false;
-bool wait_uart = false;
-bool save_labelled_boxes = false;
-bool show_process = false;
-bool show_energy = false;
-bool save_mark = false;
-bool show_info = false;
-bool run_by_frame = false;
 
 bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box)
 {
@@ -34,10 +21,10 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     }
     //显示所有的灯条
     //cout<<"Blobs after choose "<<light_blobs.size()<<endl;
-    /*if (show_light_blobs && state==SEARCHING_STATE) 
+    if (show_light_blobs && state==SEARCHING_STATE) 
     {
         drawLightBlobs(srcImage,light_blobs);
-    }*/
+    }
     // 对灯条进行匹配得出装甲板候选区
     if(!matchArmorBoxes(processImage,light_blobs,armor_boxes))
     {
@@ -46,12 +33,16 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
         //显示所有装甲板
     }
     //cout<<"armorbox detected"<<endl;
-    //if (show_armor_boxes && state==TRACKING_STATE) 
-    if (show_armor_boxes ) 
+    if (show_armor_boxes && state==TRACKING_STATE) 
     {
         showArmorBoxes("boxes", srcImage, armor_boxes);
     }
-    box = armor_boxes[0];
+    //追踪模式box才会起作用
+    if(state == TRACKING_STATE)
+    {
+        box = armor_boxes[0];
+    }
+    //都执行结束才返回真值
     return true;
 }
 /**

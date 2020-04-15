@@ -10,9 +10,11 @@
 #include <Eigen/Core>
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/tracking.hpp>
+
 #include "GetFeature.h"
 #include "MvCameraControl.h"    //相机函数
 #include "CameraInit.h"         //相机初始化函数
+#include "options.h"
 #include <unistd.h> 
 //----------------------------------------------------------------------------------------------------------------------
 // 此结构体包括灯条参数

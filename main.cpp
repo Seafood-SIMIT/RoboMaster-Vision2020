@@ -10,84 +10,126 @@ using namespace std;
 //---------------------------------------------------//
 //相机参数
 MV_FRAME_OUT_INFO_EX stInfo;
-VideoCapture g_capture("material/video/rmvideodark.MOV");
-Preprocess g_preprocess;    //初始化对象
-//自瞄程序对象
 
-//数字识别样本特征
+//mcu传输数据初始化结构体
+McuData mcu_data = {    // 单片机端回传结构体
+        //0,              // 当前云台yaw角
+        //0,              // 当前云台pitch角
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        //0,              // 云台角度标记位
+        //0,              // 是否为反陀螺模式
+        ENEMY_RED,      // 敌方颜色
+        //0,              // 能量机关x轴补偿量
+        //0,              // 能量机关y轴补偿量
+};
 
+/**
+ * @name        int main
+ * @author      seafood
+ * @par         int argc, char *argv[], char **env
+ * @return      0
+ * @function    系统自瞄运行主程序
+ * */
 int main(int argc, char *argv[], char **env)
-{    	
-	systemInit();
+{    
+    processOptions(argc, argv);             // 处理命令行参数	
+    thread CANRecv();                       //开启线程接收数据
+
+
+	systemInit();                           //系统初始化
+    //初始化预处理函数对象
+    Preprocess g_preprocess;    //初始化对象
     int width_fig, height_fig;      //图像的宽和高
     Mat g_srcImage, g_processImage, g_highexposure;     //原图像和预处理图像
     AutoAiming auto_aiming;             //自瞄对象
     auto_aiming.state = AutoAiming::State::SEARCHING_STATE;     //自瞄吃状态
 
+    //主程序循环
     while(1)
     {
         switch(g_source_type)
         {
+        //源为相机
         case SOURCE_CAMERA:
         {
-
+            //读取RGB图像
             nRet = MV_CC_GetImageForBGR(handle, pFrameBuf, nBuffSize, &stInfo, 1000);
             if( nRet != 0 )
             {
+                //失败error输出
                 cout << "error:GetImageForRGB:" << setbase(16) << nRet << endl;
 			    break;
             }
+            //成功
             else
             {
+                //图像大小
 			    width_fig = stInfo.nWidth;
 			    height_fig = stInfo.nHeight;
- 
+                //从存储中读取图像
 			    if (stInfo.enPixelType == PixelType_Gvsp_BGR8_Packed)
 			    {
 				    Mat pImg(height_fig, width_fig, CV_8UC3, pFrameBuf);
-                    g_srcImage = pImg;
+                    g_srcImage = pImg;                      //src图像储存
+                    g_processImage = g_srcImage.clone();        //预处理图像克隆(看效果决定放置位置)
                     
 			    }
                 
             }
             break;
         }
+        //源为视频
         case SOURCE_VIDEO:
         {
+            //读取视频
             g_capture.read(g_srcImage);
             break;
         }
         }
-        //
+        //追踪模式跳过前三帧
+        //后期优化时删除或者更改
         if(auto_aiming.jump_state == 1 && auto_aiming.jump_state_count <3)
         {
             auto_aiming.jump_state_count++;
             continue;
         }
-        namedWindow("g_srcImage",0);
-        resizeWindow("g_srcImage",600,400);
-        //cout<<"one turn"<<endl;
-        g_processImage = g_srcImage.clone();
-        
+        //若参数为显示src图像
+        if(show_origin)
+        {
+            namedWindow("g_srcImage",0);
+            resizeWindow("g_srcImage",600,400);
+            imshow("g_srcImage",g_srcImage);
+            waitKey(1);
+        }
+        //图像预处理
         g_preprocess.run(g_processImage);
-        //cout<<"one turn"<<endl;
+        //自瞄程序
         auto_aiming.run(g_srcImage,g_processImage);
-        //cout<<"one turn"<<endl;
-        //cvtColor(g_srcImage,g_srcImage,COLOR_RGB2GRAY);
-        imshow("g_srcImage",g_srcImage);
-        waitKey(1);
-        //energy(g_srcImage);
         
     }
+    //退出相机
     cameraExit();
+    //退出
     return 0;
 }
-
+/**
+ * @name        void systemInit
+ * @author      seafood
+ * @par         none
+ * @return      null
+ * @function    系统初始化,包括源的选择和输入数字特征
+ * */
 void systemInit()
 {
+    g_source_type = SOURCE_CAMERA;
     //输入源选择
-    cout << "Input 1 for camera, 0 for video" << endl;
-    cin >> g_source_type;
+    //默认摄像机哦
+    if(choose_source)
+    {
+        cout << "Input 1 for camera, 0 for video" << endl;
+        cin >> g_source_type;
+    }
+
     if(g_source_type == SOURCE_CAMERA)
     {
         //初始化摄像机
@@ -111,9 +153,8 @@ void systemInit()
     }
     else
     {
-        //g_capture.open();//视频文件
-        //图像读取
-        //g_capture.read("material/video/rmvideodark.MOV");
+        //源文件地址
+        g_capture.open("material/video/rmvideodark.MOV");
     }
     //数字样本集采集
     int count_number=0, filename=0;
@@ -122,13 +163,11 @@ void systemInit()
     {
         for(int j=1;j<4;j++)
         {
+            //文件名
             filename=i*10+j;
             string s = "material/picture/number/" + to_string(filename) + ".png";//to_string(k)：将数值k转化为字符串，返回对应的字符串
-            //string s ="material/picture/number/13.png";
-            Mat num_yangben = imread(s,1);
-            //cout<<"read file "<<filename<<" type is "<<num_yangben.type()<<endl;
-            getFeature(num_yangben, yangben_Feature[count_number]);
-            //cout<<"read file "<<filename<<" Feature is "<<yangben_Feature[i][10]<<endl;
+            Mat num_yangben = imread(s,1);          //读取文件
+            getFeature(num_yangben, yangben_Feature[count_number]);         //获取样本特征
             count_number++;
         }
     }

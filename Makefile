@@ -19,15 +19,24 @@ SOURCE_ENERGY_DIR=$(ENERGY_DIR)/src
 
 PREPOCESS_DIR=./Codes/Preprocess
 SOURCE_PREPOCESS_DIR=$(PREPOCESS_DIR)/src
+
+CAN_DIR=./Codes/Can
+SOURCE_CAN_DIR=$(CAN_DIR)/src
+
+KALMAN_DIR = ./Codes/Kalman
+SOURCE_KALMAN_DIR=$(KALMAN_DIR)/src
+
+TOOLS_DIR = ./Codes/Tools
+SOURCE_TOOLS_DIR=$(TOOLS_DIR)/src
 #头文件
-INC := ./ ./Codes/ArmorFinder/include ./Codes/Camera/include ./Codes/Preprocess/include ./Codes/Enegry/include ./Codes/Number/include
+INC := ./ ./Codes/ArmorFinder/include ./Codes/Tools/include ./Codes/Can/include ./Codes/Kalman/include ./Codes/Camera/include ./Codes/Preprocess/include ./Codes/Enegry/include ./Codes/Number/include
 
 #动态库或静态库文件的相对路径
 LIBSPATH := ./Codes/Camera/lib
 
-VPATH=$(SOURCE_CAMERA_DIR):$(SOURCE_ARMORFINDER_DIR):$(SOURCE_ENERGY_DIR):$(SOURCE_PREPOCESS_DIR):$(SOURCE_NUMBER_DIR)
+VPATH=$(SOURCE_CAMERA_DIR):$(SOURCE_ARMORFINDER_DIR):$(SOURCE_TOOLS_DIR):$(SOURCE_CAN_DIR):$(SOURCE_KALMAN_DIR):$(SOURCE_ENERGY_DIR):$(SOURCE_PREPOCESS_DIR):$(SOURCE_NUMBER_DIR)
 #定义变量pkg表示opencv的包
-PKG = `pkg-config opencv --libs --cflags`
+PKG = `pkg-config opencv --libs --cflags` -pthread
 
 
 #删除指令变量参数
@@ -39,7 +48,7 @@ CC = g++ -std=c++11
 CFLAGS = -g -o 
 #编译时所依赖的通用c++源程序
 #源程序文件
-SOURCE :=$(wildcard $(SOURCE_CAMERA_DIR)/*.cpp $(SOURCE_ARMORFINDER_DIR)/*.cpp $(SOURCE_ENERGY_DIR)/*.cpp $(SOURCE_PREPOCESS_DIR)/*.cpp $(SOURCE_NUMBER_DIR)/*.cpp main.cpp) 
+SOURCE :=$(wildcard $(SOURCE_CAMERA_DIR)/*.cpp $(SOURCE_ARMORFINDER_DIR)/*.cpp $(SOURCE_CAN_DIR)/*.cpp $(SOURCE_TOOLS_DIR)/*.cpp $(SOURCE_KALMAN_DIR)/*.cpp $(SOURCE_ENERGY_DIR)/*.cpp $(SOURCE_PREPOCESS_DIR)/*.cpp $(SOURCE_NUMBER_DIR)/*.cpp main.cpp) 
 SOURCE_WITHOUT_DIR :=$(notdir $(SOURCE))
 OBJS :=$(patsubst %.cpp,%.o,$(SOURCE_WITHOUT_DIR))
 
@@ -54,7 +63,7 @@ $(TARGET):$(OBJS)
 	$(CC) $(CFLAGS) $@ $^ $(addprefix -L,$(LIBSPATH)) $(addprefix -l,$(LIBS)) $(PKG) $(addprefix -I,$(INC))
 
 %.o:%.cpp
-	$(CC) -c $^ $(CFLAGS) $@  $(addprefix -I,$(INC)) $(PKG)
+	$(CC) -c $^ $(CFLAGS) $@  $(addprefix -I,$(INC)) $(PKG) 
 
 #---------------------------伪指令---------------------------------------------
 #clean操作，删除生成的文件和文件夹
@@ -72,4 +81,4 @@ add-libraries:
 .PHONY:show
 show:
 	@echo $(SOURCE_WITHOUT_DIR)
-	@echo $(OBJS)
+#	@echo $(OBJS)

@@ -1,0 +1,103 @@
+Date : 2020-04-15 00:04:36
+Directory : /home/seafood/workdir/gitsource/RoboMaster-Vision2020
+Total : 51 files,  2944 codes, 2146 comments, 918 blanks, all 6008 lines
+
+Languages
++--------------+------------+------------+------------+------------+------------+
+| language     | files      | code       | comment    | blank      | total      |
++--------------+------------+------------+------------+------------+------------+
+| C++          |         47 |      2,842 |      2,083 |        853 |      5,778 |
+| Makefile     |          2 |         94 |         56 |         61 |        211 |
+| Shell Script |          1 |          6 |          7 |          3 |         16 |
+| Markdown     |          1 |          2 |          0 |          1 |          3 |
++--------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                   | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                      |         51 |      2,944 |      2,146 |        918 |      6,008 |
+| Codes                                                                                                  |         44 |      2,758 |      2,084 |        865 |      5,707 |
+| Codes/ArmorFinder                                                                                      |          8 |        512 |        209 |         55 |        776 |
+| Codes/ArmorFinder/include                                                                              |          1 |         83 |         20 |         12 |        115 |
+| Codes/ArmorFinder/src                                                                                  |          7 |        429 |        189 |         43 |        661 |
+| Codes/Camera                                                                                           |         12 |      1,200 |      1,478 |        592 |      3,270 |
+| Codes/Camera/include                                                                                   |         10 |      1,040 |      1,393 |        540 |      2,973 |
+| Codes/Camera/src                                                                                       |          1 |        103 |         49 |         10 |        162 |
+| Codes/Can                                                                                              |          4 |        238 |         58 |         39 |        335 |
+| Codes/Can/include                                                                                      |          2 |         64 |         16 |         15 |         95 |
+| Codes/Can/src                                                                                          |          2 |        174 |         42 |         24 |        240 |
+| Codes/Enegry                                                                                           |         10 |        287 |        236 |        110 |        633 |
+| Codes/Enegry/include                                                                                   |          2 |         59 |        112 |         42 |        213 |
+| Codes/Enegry/src                                                                                       |          8 |        228 |        124 |         68 |        420 |
+| Codes/Kalman                                                                                           |          2 |         26 |         18 |         10 |         54 |
+| Codes/Kalman/include                                                                                   |          1 |          8 |          3 |          4 |         15 |
+| Codes/Kalman/src                                                                                       |          1 |         18 |         15 |          6 |         39 |
+| Codes/Number                                                                                           |          2 |        177 |         42 |         16 |        235 |
+| Codes/Number/include                                                                                   |          1 |         13 |          3 |          4 |         20 |
+| Codes/Number/src                                                                                       |          1 |        164 |         39 |         12 |        215 |
+| Codes/Preprocess                                                                                       |          3 |        130 |         26 |         26 |        182 |
+| Codes/Preprocess/include                                                                               |          1 |         16 |          1 |          5 |         22 |
+| Codes/Preprocess/src                                                                                   |          2 |        114 |         25 |         21 |        160 |
+| Codes/Tools                                                                                            |          3 |        188 |         17 |         17 |        222 |
+| Codes/Tools/include                                                                                    |          2 |         55 |         13 |         13 |         81 |
+| Codes/Tools/src                                                                                        |          1 |        133 |          4 |          4 |        141 |
++--------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+
+| filename                                                                                               | language     | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/include/ArmorFinder.h          | C++          |         83 |         20 |         12 |        115 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/ArmorBox.cpp               | C++          |          3 |          0 |          1 |          4 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/ArmorDetect.cpp            | C++          |        118 |         32 |         11 |        161 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/AutoAiming.cpp             | C++          |         42 |         27 |          6 |         75 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/FindLightBlobs.cpp         | C++          |        119 |         71 |         13 |        203 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/stateClassifyingTarget.cpp | C++          |         46 |          7 |          5 |         58 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/stateSearchingTarget.cpp   | C++          |         45 |         28 |          4 |         77 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/ArmorFinder/src/stateTrackingTarget.cpp    | C++          |         56 |         24 |          3 |         83 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/Makefile                            | Makefile     |         57 |         36 |         42 |        135 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/CameraInit.h                | C++          |         14 |          4 |          3 |         21 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/CameraParams.h              | C++          |        518 |         61 |        155 |        734 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvCameraControl.h           | C++          |        186 |      1,166 |        173 |      1,525 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvDeviceBase.h              | C++          |         27 |         29 |         36 |         92 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvErrorDefine.h             | C++          |         45 |          7 |         13 |         65 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvGigEDevice.h              | C++          |         56 |         42 |         59 |        157 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvInclude.h                 | C++          |         33 |          3 |         14 |         50 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/MvUsb3VDevice.h             | C++          |         39 |         33 |         43 |        115 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/PixelType.h                 | C++          |         93 |         20 |         21 |        134 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/include/TlFactory.h                 | C++          |         29 |         28 |         23 |         80 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Camera/src/CameraInit.cpp                  | C++          |        103 |         49 |         10 |        162 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Can/include/canManifold2G.h                | C++          |         14 |          0 |          3 |         17 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Can/include/mcudata.h                      | C++          |         50 |         16 |         12 |         78 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Can/src/canManifold2G.cpp                  | C++          |         85 |         26 |          9 |        120 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Can/src/mcudata.cpp                        | C++          |         89 |         16 |         15 |        120 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/include/energy.h                    | C++          |         37 |         57 |         31 |        125 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/include/param_struct_define.h       | C++          |         22 |         55 |         11 |         88 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/Energy.cpp                      | C++          |         24 |         26 |         11 |         61 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/EnergyClear.cpp                 | C++          |          6 |         11 |          8 |         25 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/EnergyFinder.cpp                | C++          |         46 |         12 |         11 |         69 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/EnergyMain.cpp                  | C++          |         10 |          0 |          3 |         13 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/EnergyRun.cpp                   | C++          |          9 |          9 |          7 |         25 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/JudgeContour.cpp                | C++          |         30 |         20 |          6 |         56 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/ShowEnergyArmors.cpp            | C++          |         88 |         40 |         18 |        146 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Enegry/src/Structing.cpp                   | C++          |         15 |          6 |          4 |         25 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Kalman/include/kalmanfilter.h              | C++          |          8 |          3 |          4 |         15 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Kalman/src/kalmanfilter.cpp                | C++          |         18 |         15 |          6 |         39 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Number/include/GetFeature.h                | C++          |         13 |          3 |          4 |         20 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Number/src/GetFeature.cpp                  | C++          |        164 |         39 |         12 |        215 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Preprocess/include/Preprocess.h            | C++          |         16 |          1 |          5 |         22 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Preprocess/src/Preprocess.cpp              | C++          |         61 |         20 |         10 |         91 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Preprocess/src/kalman.cpp                  | C++          |         53 |          5 |         11 |         69 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Tools/include/log.h                        | C++          |         33 |         10 |          6 |         49 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Tools/include/options.h                    | C++          |         22 |          3 |          7 |         32 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Codes/Tools/src/options.cpp                      | C++          |        133 |          4 |          4 |        141 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/Makefile                                         | Makefile     |         37 |         20 |         19 |         76 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/README.md                                        | Markdown     |          2 |          0 |          1 |          3 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/autorun.sh                                       | Shell Script |          6 |          7 |          3 |         16 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/config.h                                         | C++          |          1 |          0 |          1 |          2 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/constants.h                                      | C++          |         14 |          3 |          8 |         25 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/main.cpp                                         | C++          |        100 |         28 |         16 |        144 |
+| /home/seafood/workdir/gitsource/RoboMaster-Vision2020/main.h                                           | C++          |         26 |          4 |          5 |         35 |
+| Total                                                                                                  |              |      2,944 |      2,146 |        918 |      6,008 |
++--------------------------------------------------------------------------------------------------------+--------------+------------+------------+------------+------------+
