@@ -1,5 +1,5 @@
-#ifndef CAN
-#define CAN
+#ifndef USER_CAN_H
+#define USER_CAN_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,9 +12,11 @@
 #include <linux/can/raw.h>
 
 #include "constants.h"
-extern int enemy_color;
-
+#include "mcudata.h"
 int CANSend(unsigned char data[]);      //CAN发送函数
 void CANRecv();                          //CAN接收函数
+
+//mcu传输数据初始化结构体
+extern McuData mcu_data;
 
 #endif

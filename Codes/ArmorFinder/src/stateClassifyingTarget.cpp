@@ -69,7 +69,7 @@ bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
         g_srcImage(box_rect_new).copyTo(roi_armor);
         //大津法提取数字。
         split(roi_armor, channels);                     //调用通道拆分函数
-        if(enemy_color == ENEMY_RED){
+        if(mcu_data.enemy_color == ENEMY_RED){
             roi_armor_ostu = channels[2];             //敌方是红色，红色是第三个通道
         }
         else{

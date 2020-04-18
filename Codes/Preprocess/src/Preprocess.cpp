@@ -39,11 +39,11 @@ void Preprocess::clearWhiteLight(Mat &g_processImage)
     g_processImage_red = channels[2];             /*将红色提出来，红色是第三个通道*/   
     g_processImage_blue = channels[0];            /*将蓝色提出来，红色是第一个通道*/ 
 	//根据敌方颜色消除通道
-    if(enemy_color = ENEMY_RED)
+    if(mcu_data.enemy_color = ENEMY_RED)
 	{
 		addWeighted(g_processImage_red, 1, g_processImage_blue,-1, 0.0, g_processImage);     //将两张图片按比例合成一张图片
 	}
-    else if(enemy_color = ENEMY_BLUE)
+    else if(mcu_data.enemy_color = ENEMY_BLUE)
 	{
 		addWeighted(g_processImage_red, 1, g_processImage_blue,-1, 0.0, g_processImage);     //将两张图片按比例合成一张图片
 	}

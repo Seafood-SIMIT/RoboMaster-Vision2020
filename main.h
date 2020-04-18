@@ -32,5 +32,6 @@ int g_source_type;              //源选择函数
 cv::VideoCapture g_capture;         //视频源声明
 void systemInit();              //系统初始化函数
 
+unsigned char handshake[]= "2020";
 
 #endif

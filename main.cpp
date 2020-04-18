@@ -11,18 +11,6 @@ using namespace std;
 //相机参数
 MV_FRAME_OUT_INFO_EX stInfo;
 
-//mcu传输数据初始化结构体
-McuData mcu_data = {    // 单片机端回传结构体
-        //0,              // 当前云台yaw角
-        //0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
-        //0,              // 云台角度标记位
-        //0,              // 是否为反陀螺模式
-        ENEMY_RED,      // 敌方颜色
-        //0,              // 能量机关x轴补偿量
-        //0,              // 能量机关y轴补偿量
-};
-
 /**
  * @name        int main
  * @author      seafood
@@ -32,6 +20,9 @@ McuData mcu_data = {    // 单片机端回传结构体
  * */
 int main(int argc, char *argv[], char **env)
 {    
+    for(int i = 0; i < 2; i++){
+        int res = CANSend(handshake);
+    }
     processOptions(argc, argv);             // 处理命令行参数	
     thread receive(CANRecv);                       //开启线程接收数据
     receive.detach();

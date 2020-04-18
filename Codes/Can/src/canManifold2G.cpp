@@ -7,10 +7,19 @@
  */
 #include "canManifold2G.h"
 
-int enemy_color = ENEMY_RED;
+McuData mcu_data = {    // 单片机端回传结构体
+        //0,              // 当前云台yaw角
+        //0,              // 当前云台pitch角
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        //0,              // 云台角度标记位
+        //0,              // 是否为反陀螺模式
+        ENEMY_RED,      // 敌方颜色
+        //0,              // 能量机关x轴补偿量
+        //0,              // 能量机关y轴补偿量
+};
+
 /**
  * @name CANSend
- * @author seafood
  * @par		data[]
  * @func	CAN总线发送函数
  * */
@@ -29,7 +38,7 @@ int CANSend(unsigned char data[])
 	    exit(-1);
 	}
 	
-	strcpy(ifr.ifr_name, "can0"); //设置can接口
+	strcpy(ifr.ifr_name, USER_CAN_PORT); //设置can接口
 	printf("can port is %s\n",ifr.ifr_name);
 	ioctl(s, SIOCGIFINDEX, &ifr);
     addr.can_family = AF_CAN;
@@ -41,29 +50,26 @@ int CANSend(unsigned char data[])
 		close(s);
 		exit(-2);
 	}
-   	frame1.can_id = 0x1F;  //发送数据设置
+   	frame1.can_id = MCU_CAN_ID;  //发送数据设置
     frame1.can_dlc = 8;
     printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame1.can_id, frame1.can_dlc);
     /* prepare data for sending: 0x11,0x22...0x88 */
-    	for (int i=0; i<8; i++)
-         {
-        	frame1.data[i] = data[i];
-        	printf("%#x ", frame1.data[i]);
-         }
+    for (int i=0; i<8; i++){
+        frame1.data[i] = data[i];
+        printf("%#x ", frame1.data[i]);
+        }
 
-        printf("Sent out\n");
-        /* Sending data */
-        if(write(s, &frame1, sizeof(frame1)) < 0) //发送
-		{
-            perror("Send failed");
-            close(s);
-		}
-	 close(s);
+    printf("Sent out\n");
+    /* Sending data */
+    if(write(s, &frame1, sizeof(frame1)) < 0){ //发送
+        perror("Send failed");
+        close(s);
+	}
+	close(s);
 }
 // thread receive(canReceive);//开启串口接收线程
 /**
  * @name CANRecv
- * @author seafood
  * @par		
  * @func	CAN总线接收函数
  * */
@@ -83,7 +89,7 @@ void CANRecv()
 	    exit(-1);
 	}
 	
-	strcpy(ifr.ifr_name, "can0"); //设置can接口
+	strcpy(ifr.ifr_name, USER_CAN_PORT); //设置can接口
 	printf("can port is %s\n",ifr.ifr_name);
 	ioctl(s, SIOCGIFINDEX, &ifr);//绑定can0设备
     addr.can_family = AF_CAN;
@@ -95,26 +101,27 @@ void CANRecv()
 		close(s);
 		exit(-2);
 	}
-    rfilter[0].can_id = 0x1F; //设置滤波器，仅接收can id 0x1F的数据
+    rfilter[0].can_id = USER_CAN_ID; //设置滤波器，仅接收can id 0x1F的数据
 	rfilter[0].can_mask = CAN_SFF_MASK;
-	if(setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter)) < 0)
-	    {
-	    	perror("set receiving filter error\n");
-	    	close(s);
-	    	exit(-3);
-	    }
+	if(setsockopt(s, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter)) < 0){
+	    perror("set receiving filter error\n");
+	    close(s);
+	    exit(-3);
+	}
 
-	    while(1){
-	        nbytes = read(s, &frame0, sizeof(frame0)); //接收
-			if((frame0.can_id==0x1F)&&(nbytes>0))
-			{
-		    	printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame0.can_id, frame0.can_dlc);
-	        	for (int i=0; i < frame0.can_dlc; i++)
-	        		printf("%#x ", frame0.data[i]);
-	        	printf("\n");
-				memcpy(buffer,frame0.data,nbytes);
-				//
-                enemy_color=int(buffer[5]);
-	        }
+	while(1){
+	    nbytes = read(s, &frame0, sizeof(frame0)); //接收
+		//如果id是1f且有数据
+		if((frame0.can_id==0x1F)&&(nbytes>0))
+		{
+		    printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame0.can_id, frame0.can_dlc);
+	        //for (int i=0; i < frame0.can_dlc; i++)
+	        //	printf("%#x ", frame0.data[i]);
+	        //printf("\n");
+			//memcpy(buffer,frame0.data,nbytes);
+			mcu_data.state = frame0.data[0];
+			mcu_data.enemy_color = frame0.data[1];
+			
 	    }
+	}
 }

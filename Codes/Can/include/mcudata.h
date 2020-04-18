@@ -2,8 +2,8 @@
 // Created by sjturm on 19-5-17.
 //
 
-#ifndef _ADDITIONS_H_
-#define _ADDITIONS_H_
+#ifndef _MCUDATA_H_
+#define _MCUDATA_H_
 
 #include <stdint.h>
 //#include <systime.h>
