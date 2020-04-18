@@ -9,13 +9,22 @@
 using namespace cv;
 using namespace std;
 //参数配置
-
+/**
+ * @name        AutoAiming::findArmorBoxTop
+ * @author      seafood
+ * @par         cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box
+ * @return      bool
+ * @function    找到装甲板顶层代码
+ * */
 bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box)
 {
+    //-----------------------------------------------------------------------------
+    //定义灯条
     LightBlobs light_blobs;
     //寻找所有的灯条
     if(!findLightBolbsSJTU(srcImage,processImage,light_blobs))
     {
+        //如果没找到灯条
         //cout<<"find less than 1 blobs"<<endl;
         return false;
     }
@@ -25,6 +34,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     {
         drawLightBlobs(srcImage,light_blobs);
     }
+    //------------------------------------------------------------------------------
     // 对灯条进行匹配得出装甲板候选区
     if(!matchArmorBoxes(processImage,light_blobs,armor_boxes))
     {
@@ -33,7 +43,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
         //显示所有装甲板
     }
     //cout<<"armorbox detected"<<endl;
-    if (show_armor_boxes && state==TRACKING_STATE) 
+    if (show_armor_boxes && state==SEARCHING_STATE) 
     {
         showArmorBoxes("boxes", srcImage, armor_boxes);
     }
@@ -55,6 +65,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
 **/  
 bool AutoAiming::stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage)
 {
+    //搜索装甲板
     if(findArmorBoxTop(g_srcImage,g_processImage,box_number))
     {
         return true;

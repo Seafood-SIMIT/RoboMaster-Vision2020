@@ -3,15 +3,25 @@
 using namespace cv;
 using namespace std;
 
-
+/**
+ * @name AutoAiming::run
+ * @author seafood
+ * @par cv::Mat &g_srcImage,cv::Mat &g_processImage
+ * @func    装甲板自运行函数
+ * @return void
+ * */
 void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
 {
+    //选择状态
     switch(state)
     {
+        //搜索状态
         case SEARCHING_STATE: 
+            //搜索状态
             cout<<"SEARCHING State start!"<<endl;
-            if( stateSearchingTarget(g_srcImage,g_processImage) )
+            if( stateSearchingTarget(g_srcImage,g_processImage) )       //搜索到装甲板
             {
+                //调高曝光
                 fExposureTime = 70000;
                 nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
                 //sleep(1);//延时1秒
@@ -25,7 +35,7 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
                     printf("set exposure 70000 time failed! nRet [%x]\n\n", nRet);
                 }*/
                 //提高曝光
-                //状态改为追踪状态
+                //状态改为分类状态
                 state = CLASSIFYING_STATE;
                 cout<<"Changed into CLASSIFYING STATE"<<endl;
                 
@@ -34,6 +44,7 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
         case CLASSIFYING_STATE:
             //分类状态
             cout<<"CLASSIFYING State start!"<<endl;
+            //识别ROI中的数字
             if(numberClassifyRoi(g_srcImage, g_processImage))
             {
                 jump_state=1;jump_state_count=0;
@@ -47,8 +58,6 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
                 //追踪帧数
                 tracking_cnt = 0;
             }
-            
-
             else
             {
                 state = SEARCHING_STATE;

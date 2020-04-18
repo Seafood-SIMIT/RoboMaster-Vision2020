@@ -7,7 +7,7 @@
  */
 #include "canManifold2G.h"
 
-int enemy_color = 0;
+int enemy_color = ENEMY_RED;
 /**
  * @name CANSend
  * @author seafood

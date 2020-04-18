@@ -6,6 +6,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "options.h"            //参数选择
+#include "constants.h"          //常数设定
+#include "canManifold2G.h"      //CAN数据
+//---------------------------------命名空间----------------------
 using namespace std;
 using namespace cv;
 //图像预处理

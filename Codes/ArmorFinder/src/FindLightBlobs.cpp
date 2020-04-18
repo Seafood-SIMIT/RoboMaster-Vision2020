@@ -120,34 +120,22 @@ bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,Li
     vector<Mat> channels;               //通道数
     split(processImage, channels);         //通道拆分  
     int light_threshold = 150;                //设定亮图片阈值
-    int dim_threshold = 140;                  //设定暗图片阈值
-    int enemy_color = ENEMY_RED;                //敌人为红
-
-    ArmorBoxes boxes;           //Armor class define
 
     //参数初始化
     blobParamInit(blob_parament);
-    //根据目标颜色进行通道提取
-    if(enemy_color == ENEMY_BLUE){
-        color_channel = channels[0];        //蓝色通道是1
-    } else if(enemy_color == ENEMY_RED){
-        color_channel = channels[2];        //红色通道是3
-    } 
 
     // 对亮图片进行开闭运算
     //二值化处理
     //亮度阈值    
     threshold(color_channel, processImage_bin, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道，得到较亮的图片
     imagePreProcess(processImage_bin);
-    /*
-    if(state==TRACKING_STATE)
+    if(show_details_process && state == SEARCHING_STATE)
     {
         namedWindow("process_before_blob",0);
         resizeWindow("process_before_blob",600,400);
-       imshow("process_before_blob", processImage_bin);
+        imshow("process_before_blob", processImage_bin);
         waitKey(1);
     }
-    */
     // 使用两个不同的二值化阈值同时进行灯条提取，减少环境光照对二值化这个操作的影响。
     // 同时剔除重复的灯条，剔除冗余计算，即对两次找出来的灯条取交集。
     vector<vector<Point>> light_contours_light;    //创建存放轮廓的容器                       

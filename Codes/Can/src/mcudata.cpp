@@ -12,7 +12,6 @@
 
 
 #include "energy.h"
-#include "param_struct_define.h"
 #include "ArmorFinder.h"
 #include "log.h"
 

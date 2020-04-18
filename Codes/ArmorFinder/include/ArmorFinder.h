@@ -10,12 +10,14 @@
 #include <Eigen/Core>
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/tracking.hpp>
+#include <unistd.h> 
 
 #include "GetFeature.h"
 #include "MvCameraControl.h"    //相机函数
 #include "CameraInit.h"         //相机初始化函数
 #include "options.h"
-#include <unistd.h> 
+#include "constants.h"
+#include "canManifold2G.h"
 //----------------------------------------------------------------------------------------------------------------------
 // 此结构体包括灯条参数
 // ---------------------------------------------------------------------------------------------------------------------
@@ -62,10 +64,11 @@ public:
     //ArmorBox(const cv::Rect &pos, const LightBlobs &blobs, uint8_t color):rect(pos),light_blobs(blobs),box_color(color){}.
     explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0);
 
-    /*cv::Point2f getCenter() const; // 获取装甲板中心
+    cv::Point2f getCenter() const; // 获取装甲板中心
     double getBlobsDistance() const; // 获取两个灯条中心间距
-    double lengthDistanceRatio() const; // 获取灯条中心距和灯条长度的比值
-    double getBoxDistance() const; // 获取装甲板到摄像头的距离*/
+    //double lengthDistanceRatio() const; // 获取灯条中心距和灯条长度的比值
+    //double getBoxDistance() const; // 获取装甲板到摄像头的距离
+    double getarmorPixelS() const;//获得装甲板的长度
 
 };
 typedef std::vector<ArmorBox> ArmorBoxes;
@@ -99,17 +102,12 @@ public:
     typedef enum{
         SEARCHING_STATE, CLASSIFYING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;
-    State state;
-
+    State state;    
     void run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
 
     int jump_state = 0, jump_state_count = 0;
 };
                       // 目标装甲板
-#define BLOB_RED 1
-#define BLOB_BLUE 0
-#define ENEMY_RED 1
-#define ENEMY_BLUE 0
 
 //sunlin out
 

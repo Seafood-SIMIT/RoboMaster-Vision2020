@@ -11,6 +11,7 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+#include "constants.h"
 extern int enemy_color;
 
 int CANSend(unsigned char data[]);      //CAN发送函数

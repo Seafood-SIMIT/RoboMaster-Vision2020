@@ -6,7 +6,7 @@
 #define _CONSTANTS_H_
 
 #define PI (3.14159265459)
-
+//定义敌方颜色
 #define ENEMY_BLUE 0
 #define ENEMY_RED  1
 
@@ -16,6 +16,11 @@
 #define BIG_ENERGY_STATE   'b'
 #define SMALL_ENERGY_STATE 's'
 #define ARMOR_STATE        'a'
+
+#define BLOB_RED 1
+#define BLOB_BLUE 0
+#define ENEMY_RED 1
+#define ENEMY_BLUE 0
 
 #define FOCUS_PIXAL_8MM  (1488)
 #define FOCUS_PIXAL_5MM  (917)

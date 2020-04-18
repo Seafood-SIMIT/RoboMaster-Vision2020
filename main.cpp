@@ -33,8 +33,8 @@ McuData mcu_data = {    // 单片机端回传结构体
 int main(int argc, char *argv[], char **env)
 {    
     processOptions(argc, argv);             // 处理命令行参数	
-    thread CANRecv();                       //开启线程接收数据
-
+    thread receive(CANRecv);                       //开启线程接收数据
+    receive.detach();
 
 	systemInit();                           //系统初始化
     //初始化预处理函数对象
@@ -124,7 +124,7 @@ void systemInit()
     g_source_type = SOURCE_CAMERA;
     //输入源选择
     //默认摄像机哦
-    if(choose_source)
+    if(choose_source_button)
     {
         cout << "Input 1 for camera, 0 for video" << endl;
         cin >> g_source_type;
