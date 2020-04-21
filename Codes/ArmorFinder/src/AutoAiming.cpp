@@ -18,7 +18,9 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
         //搜索状态
         case SEARCHING_STATE: 
             //搜索状态
-            cout<<"SEARCHING State start!"<<endl;
+            if(show_state){
+                cout<<"SEARCHING State start!"<<endl;
+            }
             if( stateSearchingTarget(g_srcImage,g_processImage) )       //搜索到装甲板
             {
                 //调高曝光
@@ -43,7 +45,9 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
             break;
         case CLASSIFYING_STATE:
             //分类状态
-            cout<<"CLASSIFYING State start!"<<endl;
+            if(show_state){
+                cout<<"CLASSIFYING State start!"<<endl;
+            }
             //识别ROI中的数字
             if(numberClassifyRoi(g_srcImage, g_processImage))
             {
@@ -75,7 +79,9 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
             break;
         case TRACKING_STATE:
             //cout<<"Tracking State start!"<<endl;   
-            cout<<"追踪启动成功"<<tracking_cnt<<endl;   
+            if(show_state){
+                cout<<"追踪启动成功"<<tracking_cnt<<endl;   
+            }
             if (!stateTrackingTarget(g_srcImage,g_processImage) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
                 state = SEARCHING_STATE;
             }

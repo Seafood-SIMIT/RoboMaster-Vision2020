@@ -5,12 +5,12 @@
 ------------------------------------------------------*/
 #include "CameraInit.h"
 //一帧数据大小
-int nBuffSize = MAX_IMAGE_DATA_SIZE;
+int nBuffSize = MAX_IMAGE_DATA_SIZE;    
 unsigned char* pFrameBuf = NULL;            //相机位置
 //------------------------全局变量-----------------------
-int nRet  = -1 ;
-void* handle  = NULL ;
-float fExposureTime=1000;
+int nRet  = -1 ;                    //相机状态代码
+void* handle  = NULL ;              //相机用参数
+float fExposureTime=1000;           //曝光时间
 //-------------------------函数区------------------------------
 /**
  * @author      Seafood
@@ -88,7 +88,7 @@ int cameraInit()
         return -1;
     }
 
-    scanf("%d", &nIndex);
+    //scanf("%d", &nIndex);
 
     // 选择设备并创建句柄
 	// select device and create handle

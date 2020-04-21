@@ -14,8 +14,7 @@ McuData mcu_data = {    // 单片机端回传结构体
         //0,              // 云台角度标记位
         //0,              // 是否为反陀螺模式
         ENEMY_RED,      // 敌方颜色
-        //0,              // 能量机关x轴补偿量
-        //0,              // 能量机关y轴补偿量
+		0,				//环境光强
 };
 
 /**
@@ -114,14 +113,14 @@ void CANRecv()
 		//如果id是1f且有数据
 		if((frame0.can_id==0x1F)&&(nbytes>0))
 		{
-		    printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame0.can_id, frame0.can_dlc);
+		    //printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame0.can_id, frame0.can_dlc);
 	        //for (int i=0; i < frame0.can_dlc; i++)
 	        //	printf("%#x ", frame0.data[i]);
 	        //printf("\n");
 			//memcpy(buffer,frame0.data,nbytes);
 			mcu_data.state = frame0.data[0];
 			mcu_data.enemy_color = frame0.data[1];
-			
+			mcu_data.env_light = frame0.data[2];
 	    }
 	}
 }

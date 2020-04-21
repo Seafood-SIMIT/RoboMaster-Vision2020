@@ -22,6 +22,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     //定义灯条
     LightBlobs light_blobs;
     //寻找所有的灯条
+    //cout<<"[1] Find Blobs"<<endl;
     if(!findLightBolbsSJTU(srcImage,processImage,light_blobs))
     {
         //如果没找到灯条
@@ -29,6 +30,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
         return false;
     }
     //显示所有的灯条
+    //cout<<"[2] Show Blobs"<<endl;
     //cout<<"Blobs after choose "<<light_blobs.size()<<endl;
     if (show_light_blobs && state==SEARCHING_STATE) 
     {
@@ -36,12 +38,14 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     }
     //------------------------------------------------------------------------------
     // 对灯条进行匹配得出装甲板候选区
+    //cout<<"[3] Match Armors"<<endl;
     if(!matchArmorBoxes(processImage,light_blobs,armor_boxes))
     {
         //cout<<"No armorbox"<<endl;
         return false;
         //显示所有装甲板
     }
+    //cout<<"[4] Show Armors"<<endl;
     //cout<<"armorbox detected"<<endl;
     if (show_armor_boxes && state==SEARCHING_STATE) 
     {

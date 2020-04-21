@@ -12,19 +12,22 @@ bool show_armor_boxes = false;
 bool show_light_blobs = false;
 bool show_origin = false;
 bool run_with_camera = false;
+bool run_with_can = false;
 bool save_video = false;
 bool wait_uart = false;
 bool save_labelled_boxes = false;
 bool show_process = false;
 bool show_preprocess = false;
-bool choose_source_button = true;
+bool choose_source_button = false;
 bool show_energy = false;
 bool save_mark = false;
 bool show_info = false;
 bool run_by_frame = false;
 bool show_details_process = false;
 bool show_number_ROI_processed = false;
-
+bool debug_on_computer = false;
+bool cout_massege_class_high = false;
+bool show_state = false;
 // 使用map保存所有选项及其描述和操作，加快查找速度。
 std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
     {"--help",{
@@ -107,10 +110,21 @@ std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
             //LOGM("Write down mark");
         }
     }},
-    {"--show-info", {
-        "", [](){
-            show_info = true;
-            //LOGM("Show information!");
+    {"--debug-on-com", {
+        "",[](){
+            debug_on_computer = true;
+            run_with_can = false;
+            choose_source_button = true;
+            //LOGM("Enable show energy part!");
+        }
+    }},
+    {"--massege-class-high", {
+        "",[](){
+            cout_massege_class_high = true;
+            show_origin = true;
+            show_preprocess = true;
+            show_state = true;
+            //LOGM("Enable show energy part!");
         }
     }},
     {"--show-all", {

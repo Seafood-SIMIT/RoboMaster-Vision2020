@@ -19,6 +19,7 @@ typedef struct Mcudata {
     uint8_t enemy_color; // 敌方颜色
     //int delta_x;         // 能量机关x轴补偿量
     //int delta_y;         // 能量机关y轴补偿量
+    uint8_t env_light;      //环境光强lux
 }McuData;
 
 extern McuData mcu_data;

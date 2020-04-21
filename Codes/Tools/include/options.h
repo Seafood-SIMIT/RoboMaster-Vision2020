@@ -27,7 +27,10 @@ extern bool show_info;                          //显示信息
 extern bool run_by_frame;                       //以frame运行
 extern bool show_details_process;               //显示细节处理
 extern bool show_number_ROI_processed;          //显示数字ROI
-
+extern bool debug_on_computer;                  //在电脑上调试
+extern bool run_with_can;            //关闭can总线
+extern bool cout_massege_class_high;                //显示高级信息
+extern bool show_state;             //显示状态
 void processOptions(int argc, char **argv);
 
 #endif /* _OPTIONS_H_ */

@@ -20,14 +20,18 @@ MV_FRAME_OUT_INFO_EX stInfo;
  * */
 int main(int argc, char *argv[], char **env)
 {    
-    for(int i = 0; i < 2; i++){
+    processOptions(argc, argv);             // 处理命令行参数
+    systemInit();                           //系统初始化
+    if(run_with_can){
+        //发送handshake包
+        for(int i = 0; i < 2; i++){
         int res = CANSend(handshake);
+        }
+    	
+        thread receive(CANRecv);                       //开启线程接收数据
+        receive.detach();
     }
-    processOptions(argc, argv);             // 处理命令行参数	
-    thread receive(CANRecv);                       //开启线程接收数据
-    receive.detach();
-
-	systemInit();                           //系统初始化
+    
     //初始化预处理函数对象
     Preprocess g_preprocess;    //初始化对象
     int width_fig, height_fig;      //图像的宽和高
@@ -145,7 +149,7 @@ void systemInit()
     else
     {
         //源文件地址
-        g_capture.open("material/video/rmvideodark.MOV");
+        g_capture.open("material/video/rmvideo.MOV");
     }
     //数字样本集采集
     int count_number=0, filename=0;

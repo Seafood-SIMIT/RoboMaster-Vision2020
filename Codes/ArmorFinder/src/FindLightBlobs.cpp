@@ -123,12 +123,20 @@ bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,Li
 
     //参数初始化
     blobParamInit(blob_parament);
-
+    //cout<<"[1.1] 参数初始化"<<endl;
     // 对亮图片进行开闭运算
+    if(mcu_data.enemy_color == ENEMY_BLUE){
+        color_channel = channels[0];        //蓝色通道是1
+    } else if(mcu_data.enemy_color == ENEMY_RED){
+        color_channel = channels[2];        //红色通道是3
+    }
     //二值化处理
     //亮度阈值    
+    //cout<<"[1.2] 二值化"<<endl;
     threshold(color_channel, processImage_bin, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道，得到较亮的图片
+    //cout<<"[1.3] 图像预处理"<<endl;
     imagePreProcess(processImage_bin);
+    //cout<<"[1.4] 显示预处理后的图像"<<endl;
     if(show_details_process && state == SEARCHING_STATE)
     {
         namedWindow("process_before_blob",0);
@@ -139,7 +147,8 @@ bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,Li
     // 使用两个不同的二值化阈值同时进行灯条提取，减少环境光照对二值化这个操作的影响。
     // 同时剔除重复的灯条，剔除冗余计算，即对两次找出来的灯条取交集。
     vector<vector<Point>> light_contours_light;    //创建存放轮廓的容器                       
-    vector<Vec4i> hierarchy_light;              //                
+    vector<Vec4i> hierarchy_light;              //            
+    //cout<<"[1.5] 寻找边框"<<endl;    
     findContours(processImage_bin, light_contours_light, hierarchy_light, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE); /*在经过二值化的较亮图片中进行轮廓提取*/ 
     //对light_contours_light中的轮廓用isValidLightBlob函数进行逐一比对，判断其是否为灯条，并若是将相关的信息存入
     for (int i = 0; i < light_contours_light.size(); i++) 

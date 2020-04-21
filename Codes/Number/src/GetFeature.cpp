@@ -23,8 +23,9 @@ void getFeature(Mat m,float a[25])
     //
     //图像反色
     bitwise_not(m,m);
-    imshow("number_hioghpo", m);
-    waitKey(1);
+
+    //imshow("number_hioghpo", m);
+    //waitKey(1);
     //寻找数字部分的上下左右坐标值：
     width = m.cols;
     height = m.rows;
