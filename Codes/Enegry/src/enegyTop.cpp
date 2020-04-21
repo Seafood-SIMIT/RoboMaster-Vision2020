@@ -117,7 +117,7 @@ int energyRun()
     Mat templ[9];
     for(int i=1;i<=8;i++)
     {
-        templ[i]=imread("material/template/template"+to_string(i)+".jpg",IMREAD_GRAYSCALE);
+        templ[i]=imread("../../material/enegy/template"+to_string(i)+".jpg",IMREAD_GRAYSCALE);
     }
 #endif
     vector<Point2f> cirV;
