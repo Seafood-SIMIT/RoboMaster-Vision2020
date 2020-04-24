@@ -52,6 +52,7 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
         showArmorBoxes("boxes", srcImage, armor_boxes);
     }
     //追踪模式box才会起作用
+    target_box = armor_boxes[0];
     if(state == TRACKING_STATE)
     {
         box = armor_boxes[0];

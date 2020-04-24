@@ -77,10 +77,8 @@ bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
         }
         //换成三色图
         cv::cvtColor(roi_armor_ostu, roi_armor_ostu, COLOR_GRAY2RGB);
-        if(show_number_ROI_processed)
+        if(show_details_process)
         {
-            namedWindow("show_number_ROI_processed",0);
-            resizeWindow("show_number_ROI_processed",600,400);
             imshow("ROI_NUMBER",roi_armor_ostu);
             waitKey(1);
         }

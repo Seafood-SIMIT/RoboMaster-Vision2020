@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include "MvCameraControl.h"
 
+#include "canManifold2G.h"
+#include "constants.h"
 #define MAX_IMAGE_DATA_SIZE   (1920*1200*3)
 
 //--------------------------函数定义--------------------

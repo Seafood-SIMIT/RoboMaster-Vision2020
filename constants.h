@@ -24,7 +24,13 @@
 //#define FOCUS_PIXAL      FOCUS_PIXAL_5MM
 
 #define USER_CAN_PORT   "can0"
-#define USER_CAN_ID      0x1F
-#define MCU_CAN_ID       0x11
+#define USER_CAN_ID      0x11
+#define MCU_CAN_ID       0x1F
+
+#define EXPO_CLASS_5      13000
+#define EXPO_CLASS_4      0x11
+#define EXPO_CLASS_3      0x11
+#define EXPO_CLASS_2      0x11
+#define EXPO_CLASS_1      0x11
 
 #endif /* _CONSTANTS_H */

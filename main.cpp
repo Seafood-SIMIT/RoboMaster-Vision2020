@@ -21,23 +21,25 @@ MV_FRAME_OUT_INFO_EX stInfo;
 int main(int argc, char *argv[], char **env)
 {    
     processOptions(argc, argv);             // 处理命令行参数
-    systemInit();                           //系统初始化
-    if(run_with_can){
-        //发送handshake包
-        for(int i = 0; i < 2; i++){
-        int res = CANSend(handshake);
-        }
-    	
-        thread receive(CANRecv);                       //开启线程接收数据
-        receive.detach();
-    }
-    
+    //变量定义
     //初始化预处理函数对象
     Preprocess g_preprocess;    //初始化对象
     int width_fig, height_fig;      //图像的宽和高
     Mat g_srcImage, g_processImage, g_highexposure;     //原图像和预处理图像
     AutoAiming auto_aiming;             //自瞄对象
     auto_aiming.state = AutoAiming::State::SEARCHING_STATE;     //自瞄吃状态
+
+    systemInit();                           //系统初始化
+    if(run_with_can){
+        //发送handshake包
+        for(int i = 0; i < 3; i++){
+        int res = CANSend(handshake);
+        waitKey(500);
+        }
+    	
+        thread receive(CANRecv);                       //开启线程接收数据
+        receive.detach();
+    }
 
     //主程序循环
     while(1)

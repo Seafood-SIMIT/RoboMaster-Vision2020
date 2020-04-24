@@ -119,7 +119,7 @@ bool AutoAiming::findLightBolbsSJTU(cv::Mat &g_srcImage,cv::Mat &processImage,Li
     Mat processImage_bin;     //亮源图和暗原图
     vector<Mat> channels;               //通道数
     split(processImage, channels);         //通道拆分  
-    int light_threshold = 150;                //设定亮图片阈值
+    int light_threshold = 130;                //设定亮图片阈值
 
     //参数初始化
     blobParamInit(blob_parament);
@@ -193,7 +193,7 @@ void AutoAiming::drawLightBlobs(Mat &g_srcImage, const LightBlobs &light_blobs)
     namedWindow("blobs",0);
     resizeWindow("blobs",600,400);
     imshow("blobs", img2show4blobs);
-    waitKey(0);
+    waitKey(1);
 }
 
 
