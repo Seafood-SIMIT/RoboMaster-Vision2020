@@ -38,7 +38,7 @@ int CANSend(unsigned char data[])
 	}
 	
 	strcpy(ifr.ifr_name, USER_CAN_PORT); //设置can接口
-	printf("can port is %s\n",ifr.ifr_name);
+	//printf("can port is %s\n",ifr.ifr_name);
 	ioctl(s, SIOCGIFINDEX, &ifr);
     addr.can_family = AF_CAN;
 	addr.can_ifindex = ifr.ifr_ifindex;
@@ -51,12 +51,12 @@ int CANSend(unsigned char data[])
 	}
    	frame1.can_id = MCU_CAN_ID;  //发送数据设置
     frame1.can_dlc = 8;
-    printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame1.can_id, frame1.can_dlc);
+    //printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame1.can_id, frame1.can_dlc);
     /* prepare data for sending: 0x11,0x22...0x88 */
-    for (int i=0; i<8; i++){
-        frame1.data[i] = data[i];
-        printf("%#x ", frame1.data[i]);
-        }
+    //for (int i=0; i<8; i++){
+    //    frame1.data[i] = data[i];
+        //printf("%#x ", frame1.data[i]);
+    //    }
 
     printf("Sent out\n");
     /* Sending data */
@@ -111,7 +111,7 @@ void CANRecv()
 	while(1){
 	    nbytes = read(s, &frame0, sizeof(frame0)); //接收
 		//如果id是1f且有数据
-		if((frame0.can_id==0x1F)&&(nbytes>0))
+		if((frame0.can_id==USER_CAN_ID)&&(nbytes>0))
 		{
 		    //printf("%s ID=%#x data length=%d\n", ifr.ifr_name, frame0.can_id, frame0.can_dlc);
 	        //for (int i=0; i < frame0.can_dlc; i++)
@@ -121,6 +121,7 @@ void CANRecv()
 			mcu_data.state = frame0.data[0];
 			mcu_data.enemy_color = frame0.data[1];
 			mcu_data.env_light = frame0.data[2];
+			//printf("Receieve data from MCU,state is %d, enemycolor is %d, env_light is %d\n",mcu_data.state,mcu_data.enemy_color,mcu_data.env_light);
 	    }
 	}
 }

@@ -47,6 +47,24 @@ bool PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
     }
     return true;
 }
+void paraInit()
+{
+    if(mcu_data.env_light > 0 && mcu_data.env_light < 20){
+        fExposureTime=1000;
+    }
+    else if(mcu_data.env_light >= 20 && mcu_data.env_light < 40){
+        fExposureTime=3000;
+    }
+    else if(mcu_data.env_light >= 40 && mcu_data.env_light < 60){
+        fExposureTime=5000;
+    }
+    else if(mcu_data.env_light >= 60 && mcu_data.env_light < 80){
+        fExposureTime=7000;
+    }
+    else{
+        fExposureTime=EXPO_CLASS_5;
+    }
+}
 /**
  * @author      Seafood
  * @name        cameraInit
@@ -57,6 +75,7 @@ bool PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
 int cameraInit()
 {
 
+    paraInit();
     MV_CC_DEVICE_INFO_LIST stDeviceList;
     memset(&stDeviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
 
@@ -107,7 +126,6 @@ int cameraInit()
         printf("MV_CC_OpenDevice fail! nRet [%x]\n", nRet);
         return -1;
     }
-    fExposureTime = 1000;
     nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
     // 开始取流
 	// start grab image

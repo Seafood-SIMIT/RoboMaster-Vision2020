@@ -9,7 +9,7 @@ ip -details link show can0
 sudo ifconfig can0 up
 
 #开机设置
-sudo ./jetson_clocks.sh
+sudo bash ~/jetson_clocks.sh
 
 #路径设置
 export LD_LIBRARY_PATH=/usr/local/lib

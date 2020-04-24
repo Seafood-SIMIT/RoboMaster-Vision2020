@@ -118,6 +118,20 @@ std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
             //LOGM("Enable show energy part!");
         }
     }},
+    {"--debug-on-manifold", {
+        "",[](){
+            debug_on_computer = false;
+            run_with_can = true;
+            choose_source_button = false;
+            show_origin = true;
+            show_preprocess = true;
+            show_state = true;
+            show_armor_boxes = true;
+            cout_massege_class_high = true;
+            show_details_process = true;
+            //LOGM("Enable show energy part!");
+        }
+    }},
     {"--massege-class-high", {
         "",[](){
             cout_massege_class_high = true;
