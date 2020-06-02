@@ -8,7 +8,8 @@
 #include <iostream>
 #include "MvCameraControl.h"    //相机函数
 #include <thread>
-
+//#include "opencv2/tracking.hpp"
+//#include "config.h"
 //包含自制头文件
 #include "CameraInit.h"         //相机初始化函数
 #include "Preprocess.h"         //图像预处理
