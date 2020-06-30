@@ -18,6 +18,7 @@
 #include "options.h"
 #include "constants.h"
 #include "canManifold2G.h"
+#include "kalmanfilter.h"
 //----------------------------------------------------------------------------------------------------------------------
 // 此结构体包括灯条参数
 // ---------------------------------------------------------------------------------------------------------------------
@@ -102,10 +103,14 @@ public:
     typedef enum{
         SEARCHING_STATE, CLASSIFYING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;
-    State state;    
+    State state; 
+    //声明卡尔曼滤波器
+    Kalman *kalman_filter;   
+    //考虑track运行跳过前三帧
+    int jump_state = 0, jump_state_count = 0;
     void run(cv::Mat &g_srcImage,cv::Mat &g_processImage);
 
-    int jump_state = 0, jump_state_count = 0;
+    
 };
                       // 目标装甲板
 

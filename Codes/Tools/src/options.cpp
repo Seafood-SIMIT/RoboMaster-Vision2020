@@ -115,6 +115,7 @@ std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
             debug_on_computer = true;
             run_with_can = false;
             choose_source_button = true;
+            show_state = true;
             //LOGM("Enable show energy part!");
         }
     }},

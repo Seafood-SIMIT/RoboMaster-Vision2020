@@ -92,13 +92,13 @@ int cameraInit()
     {
         for (int i = 0; i < stDeviceList.nDeviceNum; i++)
         {
-            printf("[device %d]:\n", i);
+            //printf("[device %d]:\n", i);
             MV_CC_DEVICE_INFO* pDeviceInfo = stDeviceList.pDeviceInfo[i];
             if (NULL == pDeviceInfo)
             {
                 break;
             } 
-            PrintDeviceInfo(pDeviceInfo);            
+            //PrintDeviceInfo(pDeviceInfo);            
         }  
     } 
     else

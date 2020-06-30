@@ -1,7 +1,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 //------------------------包含文件-------------------  
-#include "opencv2/opencv.hpp"
+#include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 #include "options.h"            //选项
 #include "canManifold2G.h"      //CAN总线通讯
 #include "constants.h"          //常量配置
-#include "mcudata.h"            //mcu结构体定义
+//#include "mcudata.h"            //mcu结构体定义
 
 #define MAX_IMAGE_DATA_SIZE   (1920*1200*3)     //图像最大大小
 #define SOURCE_CAMERA    1      //信号源为摄像机
@@ -32,7 +32,9 @@
 int g_source_type;              //源选择函数
 cv::VideoCapture g_capture;         //视频源声明
 void systemInit();              //系统初始化函数
-
+//握手信息声明.
 unsigned char handshake[]= "2020";
 
+//声明一个can对象
+Can can;
 #endif

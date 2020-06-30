@@ -23,6 +23,8 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
             }
             if( stateSearchingTarget(g_srcImage,g_processImage) )       //搜索到装甲板
             {
+                //定义新卡尔曼滤波器
+                kalman_filter = new Kalman(); 
                 if(mcu_data.state == 1){
                     fExposureTime = 130000;
                     nRet = MV_CC_SetFloatValue(handle, "ExposureTime", fExposureTime);
@@ -104,12 +106,16 @@ void AutoAiming::run(cv::Mat &g_srcImage,cv::Mat &g_processImage)
             }*/
             break;
         case TRACKING_STATE:
-               
+            //状态显示        
             if(show_state){
                 cout<<"追踪启动成功"<<tracking_cnt<<endl;   
             }
             if (!stateTrackingTarget(g_srcImage,g_processImage) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
+                //删除卡尔曼滤波
+                delete kalman_filter;
+                //状态更改为搜寻状态
                 state = SEARCHING_STATE;
+                
             }
             break;
     }

@@ -11,6 +11,16 @@ using namespace std;
 //相机参数
 MV_FRAME_OUT_INFO_EX stInfo;
 
+McuData mcu_data={    // 单片机端回传结构体初始化
+            0,             // 当前大云台yaw角度
+            0,              // 当前大云台pitch角度
+            0,              // 当前小云台yaw角度
+            0,              // 当前小云台pitch角度
+            0,             // 子弹速度
+            0,             // 光照强度
+            0,              // 大/小云台工作模式 0x00：大云台直射，小云台全自动  0x01:大云台抛射，小云台全自动
+            0,              // 前4位表示工作状态，后4位表示敌方战车颜色
+            };
 /**
  * @name        int main
  * @author      seafood
@@ -33,11 +43,11 @@ int main(int argc, char *argv[], char **env)
     if(run_with_can){
         //发送handshake包
         for(int i = 0; i < 3; i++){
-        int res = CANSend(handshake);
+        int res = can.canTansfer(handshake);
         waitKey(500);
         }
-    	
-        thread receive(CANRecv);                       //开启线程接收数据
+    	cout<<"Send Can Mes Sucess."<<endl;
+        thread receive(canReceive,&can);                       //开启线程接收数据
         receive.detach();
     }
 
@@ -85,12 +95,13 @@ int main(int argc, char *argv[], char **env)
         }
         //追踪模式跳过前三帧
         //后期优化时删除或者更改
-        if(auto_aiming.jump_state == 1 && auto_aiming.jump_state_count <3)
-        {
-            auto_aiming.jump_state_count++;
-            continue;
-        }
+        //if(auto_aiming.jump_state == 1 && auto_aiming.jump_state_count <3)
+        //{
+        //    auto_aiming.jump_state_count++;
+        //    continue;
+        //}
         //若参数为显示src图像
+        
         if(show_origin)
         {
             namedWindow("g_srcImage",0);
@@ -101,6 +112,8 @@ int main(int argc, char *argv[], char **env)
         //图像预处理
         g_preprocess.run(g_processImage);
         //自瞄程序
+        // cout<<g_srcImage.rows<<","<<g_srcImage.cols<<endl;
+        // sleep(30);
         auto_aiming.run(g_srcImage,g_processImage);
         
     }
@@ -132,7 +145,7 @@ void systemInit()
         //初始化摄像机
         if( cameraInit() == CAMERA_INIT_SUCCESS)
         {
-            cout << "camera init success" << endl;
+            //cout << "camera init success" << endl;
             //获取一帧数据的大小
             MVCC_INTVALUE stIntvalue = {0};
             nRet = MV_CC_GetIntValue(handle, "PayloadSize", &stIntvalue);
@@ -155,7 +168,6 @@ void systemInit()
     }
     //数字样本集采集
     int count_number=0, filename=0;
-    
     for(int i = 1; i < 9; i++)//在原例子上，i=0;i<10改成i=1;i<9
     {
         for(int j=1;j<4;j++)
@@ -163,8 +175,9 @@ void systemInit()
             //文件名
             filename=i*10+j;
             string s = "material/picture/number/" + to_string(filename) + ".png";//to_string(k)：将数值k转化为字符串，返回对应的字符串
+            
             Mat num_yangben = imread(s,1);          //读取文件
-            getFeature(num_yangben, yangben_Feature[count_number]);         //获取样本特征
+            //getFeature(num_yangben, yangben_Feature[count_number]);         //获取样本特征
             count_number++;
         }
     }

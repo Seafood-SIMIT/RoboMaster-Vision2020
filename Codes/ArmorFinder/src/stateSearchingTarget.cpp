@@ -51,17 +51,19 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     {
         showArmorBoxes("boxes", srcImage, armor_boxes);
     }
+    //这里增加大小排序或者位置排序.
     //追踪模式box才会起作用
-    target_box = armor_boxes[0];
-    if(state == TRACKING_STATE)
-    {
+    if(state == TRACKING_STATE){
         box = armor_boxes[0];
+    }
+    else if (state == SEARCHING_STATE){
+        target_box = armor_boxes[0];
     }
     //都执行结束才返回真值
     return true;
 }
 /**
-*@author：王妍璐 江培玲
+*@author：seafood
 *@name：main()
 *@return:void
 *@function：
@@ -70,15 +72,6 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
 **/  
 bool AutoAiming::stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage)
 {
-    //搜索装甲板
-    if(findArmorBoxTop(g_srcImage,g_processImage,box_number))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-    
-        
+    //搜索装甲板顶层函数
+    return findArmorBoxTop(g_srcImage,g_processImage,box_number);
 }

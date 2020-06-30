@@ -12,6 +12,13 @@ project(vision)
 #-----------------------------------------------------------
 #C++版本
 add_definitions(-std=c++11)
+#add_compile_options(-lpthread)
+
+#添加Debug选项
+SET(CMAKE_BUILD_TYPE "Debug")  
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")  
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
+
 #将名称存入DIR_SRCS中
 aux_source_directory(. DIR_SRCS)
 #-----------------------------------------------------------
@@ -36,6 +43,8 @@ link_libraries(MvCameraControl)
 #-----------------------------------------------------------
 #连接thread
 find_package (Threads REQUIRED)
+#link_libraries(${CMAKE_THREAD_LIBS_INIT})
+
 #-----------------------------------------------------------
 #链接opencv
 #find_package (PkgConfig REQUIRED)
@@ -55,6 +64,7 @@ add_executable(vision main.cpp main.h)
 #添加链接库
 target_link_libraries(vision
                     ${OPENCVPC_LIBRARIES}
+                    ${CMAKE_THREAD_LIBS_INIT}
                     camera
                     armor_finder
                     manifold_can
@@ -62,4 +72,4 @@ target_link_libraries(vision
                     number
                     preprocess
                     tools
-                    Threads::Threads)
+                    )

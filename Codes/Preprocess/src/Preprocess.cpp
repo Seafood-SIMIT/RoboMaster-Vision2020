@@ -5,6 +5,9 @@
 ------------------------------------------------------*/
 
 #include "Preprocess.h"
+//---------------------------------命名空间----------------------
+using namespace std;
+using namespace cv;
 /**
  * @name        Preprocess::run
  * @author      seafood
@@ -14,7 +17,9 @@
  * */
 void Preprocess::run(Mat &g_processImage)
 {
+	//cout<<"Preprocess Successed!\n"<<endl;
     clearWhiteLight(g_processImage);                                //消除白光
+	
     cvtColor(g_processImage, g_processImage, COLOR_GRAY2RGB);     //将黑白图像转换成三通道
     if(show_preprocess)
 	{
@@ -23,6 +28,7 @@ void Preprocess::run(Mat &g_processImage)
     	imshow("g_processImage",g_processImage);
     	waitKey(1);
 	}
+	
 }
 /**
  * @name        Preprocess::clearWhiteLight

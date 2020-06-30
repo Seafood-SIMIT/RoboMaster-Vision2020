@@ -19,7 +19,7 @@ Point armor_first_Positin= Point(1,1);
  * @par         null
  * @func        卡尔曼预测装甲板位置
  * */
-int kalmanPrediction()
+void kalmanPrediction()
 {
     RNG rng;
     //kalman初始化
