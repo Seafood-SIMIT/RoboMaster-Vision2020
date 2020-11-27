@@ -4,15 +4,27 @@ cmake_minimum_required(VERSION 3.10)
 #项目信息
 project(vision)
 
+
+#-----------------------------------------------------------
+# 检查c++编译器标志，设置c++11支持变量
+#include(CheckCXXCompilerFlag)
+#CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+#if(COMPILER_SUPPORTS_CXX11)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#else()
+#    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+#endif()
+#CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+#C++版本
+add_definitions(-std=c++11)
+#add_compile_options(-lpthread)
+
 #加入头文件
 #FILE(GLOB headers "Codes/*/include/*.h")
 #MESSAGE( STATUS "source file = ${headers}.")
 #set(header2son "${headers}" CACHE INTERNAL "头文件传递")
 
-#-----------------------------------------------------------
-#C++版本
-add_definitions(-std=c++11)
-#add_compile_options(-lpthread)
+
 
 #添加Debug选项
 SET(CMAKE_BUILD_TYPE "Debug")  
@@ -45,25 +57,24 @@ link_libraries(MvCameraControl)
 find_package (Threads REQUIRED)
 #link_libraries(${CMAKE_THREAD_LIBS_INIT})
 
+
 #-----------------------------------------------------------
-#链接opencv
-#find_package (PkgConfig REQUIRED)
-#pkg_search_module(OPENCVPC REQUIRED opencv)
+#指定生成目标
+add_executable(vision main.cpp)
+
 
 find_package (OpenCV REQUIRED)
 link_libraries(opencv_tracking)
-#include_directories(${OPENCV_INCLUDE_DIRS})
+link_libraries(opencv_videoio)
+include_directories(${OPENCV_INCLUDE_DIRS})
 #-----------------------------------------------------------
 #添加子目录
 add_subdirectory(Codes)
 
-#-----------------------------------------------------------
-#指定生成目标
-add_executable(vision main.cpp main.h)
 
 #添加链接库
 target_link_libraries(vision
-                    ${OPENCVPC_LIBRARIES}
+                    ${OpenCV_LIBS}
                     ${CMAKE_THREAD_LIBS_INIT}
                     camera
                     armor_finder
@@ -73,3 +84,6 @@ target_link_libraries(vision
                     preprocess
                     tools
                     )
+#-----------------------------------------------------------
+
+

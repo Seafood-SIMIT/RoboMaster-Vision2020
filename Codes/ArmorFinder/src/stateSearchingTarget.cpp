@@ -1,26 +1,23 @@
 
 /*-----------------------------文件--------------------
-*   文件名：LightBox.cpp
-*   作者：  王妍璐 江培玲
-*   功能：  对图片进行通道拆分和腐蚀膨胀以提取出灯条
+*   文件名：    stateSearchingTarget.cpp
+*   作者：      seafood
+*   功能：      搜寻状态主代码
 ------------------------------------------------------*/
 //-----------------------------头文件引用和命名空间-------------------
-#include "ArmorFinder.h"
+#include "stateSearchingTarget.h"
 using namespace cv;
 using namespace std;
-//参数配置
+
 /**
- * @name        AutoAiming::findArmorBoxTop
+ * @name        findArmorBoxTop
  * @author      seafood
  * @par         cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box
  * @return      bool
  * @function    找到装甲板顶层代码
  * */
-bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorBox &box)
+bool StateSearchingTarget::run(cv::Mat &srcImage,cv::Mat &processImage)
 {
-    //-----------------------------------------------------------------------------
-    //定义灯条
-    LightBlobs light_blobs;
     //寻找所有的灯条
     //cout<<"[1] Find Blobs"<<endl;
     if(!findLightBolbsSJTU(srcImage,processImage,light_blobs))
@@ -28,13 +25,6 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
         //如果没找到灯条
         //cout<<"find less than 1 blobs"<<endl;
         return false;
-    }
-    //显示所有的灯条
-    //cout<<"[2] Show Blobs"<<endl;
-    //cout<<"Blobs after choose "<<light_blobs.size()<<endl;
-    if (show_light_blobs && state==SEARCHING_STATE) 
-    {
-        drawLightBlobs(srcImage,light_blobs);
     }
     //------------------------------------------------------------------------------
     // 对灯条进行匹配得出装甲板候选区
@@ -47,31 +37,14 @@ bool AutoAiming::findArmorBoxTop(cv::Mat &srcImage,cv::Mat &processImage, ArmorB
     }
     //cout<<"[4] Show Armors"<<endl;
     //cout<<"armorbox detected"<<endl;
-    if (show_armor_boxes && state==SEARCHING_STATE) 
+    if (show_armor_boxes )//&& state==SEARCHING_STATE) 
     {
         showArmorBoxes("boxes", srcImage, armor_boxes);
     }
     //这里增加大小排序或者位置排序.
     //追踪模式box才会起作用
-    if(state == TRACKING_STATE){
-        box = armor_boxes[0];
-    }
-    else if (state == SEARCHING_STATE){
-        target_box = armor_boxes[0];
-    }
+    //box = armor_boxes[0];
     //都执行结束才返回真值
     return true;
 }
-/**
-*@author：seafood
-*@name：main()
-*@return:void
-*@function：
-*@para：box: img:
-*其他要注意的地方
-**/  
-bool AutoAiming::stateSearchingTarget(cv::Mat &g_srcImage,cv::Mat &g_processImage)
-{
-    //搜索装甲板顶层函数
-    return findArmorBoxTop(g_srcImage,g_processImage,box_number);
-}
+

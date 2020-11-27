@@ -1,53 +1,29 @@
-#include "ArmorFinder.h"
+#include "stateClassifyingTarget.h"
 
 using namespace cv;
 using namespace std;
 
-/**
- * @name:        ArmorBox::getarmorPixelS()
- * @par:         
- * @return:      double
- * @function:    获得数字ROI的面积
- * */
-// 获取灯条长度和间距的比例
-double ArmorBox::getarmorPixelS() const {
-    if (light_blobs.size() == 2) {
-        return max(light_blobs[0].length, light_blobs[1].length)
-               * getBlobsDistance();
-    } else {
-        return 100;
-    }
-}
-// 获取两个灯条中心点的间距
-double ArmorBox::getBlobsDistance() const {
-    if (light_blobs.size() == 2) {
-        auto &x = light_blobs[0].rect.center;
-        auto &y = light_blobs[1].rect.center;
-        return sqrt((x.x - y.x) * (x.x - y.x) + (x.y - y.y) * (x.y - y.y));
-    } else {
-        return 0;
-    }
-}
+
 /**
  * @name:        AutoAiming::numberClassifyRoi
  * @par:         cv::Mat &g_srcImage,cv::Mat &g_processImage
- * @return:      bool
+ * @return:      ArmorBox
  * @function:    识别数字代码
  * */
-bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
+ArmorBox StateClassifyingTarget::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage, armorBoxes armor_boxes)
 {
     //-------------------------变量定义
     Mat roi_armor, roi_armor_ostu;  //数字区域
     int number_armor[armor_boxes.size()];   //每个装甲板的数字
-    //初始化目标装甲板
-    target_box.rect = cv::Rect2d(0,0,0,0);
-    target_box.id=-1;
     //cout<<"total　box number" << armor_boxes.size()<<endl;
     int target_id=0;
     int useful_number=0;
     vector<Mat> channels;                 //利用vector对象拆分
+    ArmorBox target_box=armor_boxes[0];
     ArmorBox sort_curr = armor_boxes[0];
-
+    //初始化目标装甲板
+    target_box.rect = cv::Rect2d(0,0,0,0);
+    target_box.id=-1;
     //------------------------操作
     //根据装甲板大小排序
     sort(armor_boxes.begin(), armor_boxes.end(), [&](const ArmorBox &a, const ArmorBox &b) {
@@ -83,7 +59,7 @@ bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
             waitKey(1);
         }
         //各个数字识别后储存
-        number_armor[i] = on_showImage_triggered(roi_armor_ostu);
+        number_armor[i] = getResultNumber(roi_armor_ostu);
         if(number_armor[i]!=0)
         {
             cout<<"Detected Armor Number of "<<i<<" : "<<number_armor[i]<<endl;
@@ -95,7 +71,7 @@ bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
     if(useful_number==0)
     {
         cout<<"Detected No Number_Armor"<<" "<<endl;
-        return false;
+        return target_box;
     }
     //目标是最后一个装甲板,即最近的装甲板 
     target_box = armor_boxes[target_id];
@@ -103,8 +79,20 @@ bool AutoAiming::numberClassifyRoi(cv::Mat &g_srcImage,cv::Mat &g_processImage)
     if (target_box.rect == cv::Rect2d(0, 0, 0, 0)) 
     {   
         cout<<"Get No Boxes After Number"<<endl;
-        return false;
+        return target_box;
     }
     //所有结束返回正确
-    return true;
+    return target_box;
+}
+
+ArmorBox StateClassifyingTarget::run(cv::Mat &srcImage,cv::Mat &processImage,armorBoxes armor_boxes)
+{
+    if(show_state){
+        cout<<"CLASSIFYING State start!"<<endl;
+    }
+    //识别ROI中的数字
+    ArmorBox target_box=numberClassifyRoi(srcImage, processImage,armor_boxes);
+    
+    
+    return target_box;
 }

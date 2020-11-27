@@ -1,15 +1,15 @@
-/**********kalman头文件
- * 
- * *********************/
+//
+// Created by sunlin on 2020-10-11
+//
 #ifndef KALMAN_H_
 #define KALMAN_H_
 
 #include "opencv2/video/tracking.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iostream>
+//#include "opencv2/highgui/highgui.hpp"
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <iostream>
 class Kalman{
 	private:
 		const int stateNum=4;                                      //状态值4×1向量(x,y,△x,△y)

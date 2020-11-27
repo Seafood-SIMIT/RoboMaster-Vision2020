@@ -9,7 +9,13 @@
 
 //#define ALLY_BLUE ENEMY_RED
 //#define ALLY_RED  ENEMY_BLUE
-
+//系统运行参数
+#define SOURCE_CAMERA    1      //信号源为摄像机
+#define SOURCE_VIDEO    0       //信号源为视频源
+#define CAMERA_INIT_SUCCESS 1   //相机初始化成功
+#define CAMERA_INIT_FAIL    0   //相机初始化失败
+//相机参数
+#define MAX_IMAGE_DATA_SIZE   (1920*1200*3)     //图像最大大小
 #define BIG_ENERGY_STATE   'b'
 #define SMALL_ENERGY_STATE 's'
 #define ARMOR_STATE        'a'
@@ -27,6 +33,8 @@
 #define USER_CAN_ID      0x11
 #define MCU_CAN_ID       0x1F
 
+//根据曝光强度设置曝光时间以适应不同的环境
+//未完成，本想使用遗传算法。
 #define EXPO_CLASS_5      13000
 #define EXPO_CLASS_4      0x11
 #define EXPO_CLASS_3      0x11

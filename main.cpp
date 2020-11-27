@@ -1,60 +1,131 @@
 /*-----------------------------文件--------------------
 *   文件名：main.cpp
-*   作者：  孙霖
+*   作者：  seafood
 *   功能：  主函数
 ------------------------------------------------------*/
-#include "main.h"
+//------------------------包含文件-------------------
+//项目头文件
+
+#include "Preprocess.h"         //图像预处理
+#include "energy.h"             //能量机关
+
+#include "log.h"                //log
+#include "AutoAiming.h"
+
+#include <thread>
+#include <istream>
+
 //-----------------------命名空间------------------------
 using namespace cv;
 using namespace std;
 //---------------------------------------------------//
-//相机参数
-MV_FRAME_OUT_INFO_EX stInfo;
 
-McuData mcu_data={    // 单片机端回传结构体初始化
-            0,             // 当前大云台yaw角度
-            0,              // 当前大云台pitch角度
-            0,              // 当前小云台yaw角度
-            0,              // 当前小云台pitch角度
-            0,             // 子弹速度
-            0,             // 光照强度
-            0,              // 大/小云台工作模式 0x00：大云台直射，小云台全自动  0x01:大云台抛射，小云台全自动
-            0,              // 前4位表示工作状态，后4位表示敌方战车颜色
-            };
+
+/**
+ * @name        void systemInit
+ * @author      seafood
+ * @par         none
+ * @return      null
+ * @function    系统初始化,包括源的选择和输入数字特征
+ * */
+cv::VideoCapture systemInit(int* source_type)
+{
+    
+
+    //g_source_type = SOURCE_CAMERA;
+    //输入源选择
+    //默认摄像机哦
+    if(choose_source_button)
+    {
+        //运行交互语句
+        cout << "Input 1 for camera, 0 for video" << endl;
+        cin >> *source_type;
+    }
+    cv::VideoCapture capture;         //视频源声明
+        //源文件地址
+    if(*source_type == SOURCE_CAMERA)
+    {
+
+        //初始化摄像机
+        if( cameraInit() == CAMERA_INIT_SUCCESS)
+        {
+            //cout << "camera init success" << endl;
+            //获取一帧数据的大小
+            MVCC_INTVALUE stIntvalue = {0};
+            nRet = MV_CC_GetIntValue(handle, "PayloadSize", &stIntvalue);
+
+            if (nRet != MV_OK)
+            {
+                printf("Get PayloadSize failed! nRet [%x]\n", nRet);
+            }	
+	        //申请空间
+            pFrameBuf = (unsigned char*)malloc(nBuffSize);
+
+            //设置存储区
+            memset(&stInfo, 0, sizeof(MV_FRAME_OUT_INFO_EX));
+        }
+        //return NULL;
+    }
+    else
+    {
+        capture.open("material/video/rmvideo.MOV");
+        
+    }
+    //数字样本集采集
+    getYangbenFeatures();
+    return capture;
+}
+/**
+ * @name        void systemInit
+ * @par         none
+ * @return      int
+ * @function    can接收线程
+ * */
+int CanThreadReceieve(){
+//声明一个can对象
+    //Can can;
+    //握手信息声明.
+    unsigned char handshake[]= "2020";
+    //发送handshake包
+    for(int i = 0; i < 3; i++){
+        int res = can.canTansfer(handshake);        //can总线发送三次handshake等待电控组回应
+        waitKey(500);                               //延时500ms
+    }
+    cout<<"Send Can Mes Sucess."<<endl;
+    thread receive(mcuDataReceive,&can);            //开启线程接收数据
+    receive.detach();
+    return 1;
+}
 /**
  * @name        int main
  * @author      seafood
  * @par         int argc, char *argv[], char **env
  * @return      0
- * @function    系统自瞄运行主程序
+ * @function    系统运行主程序
  * */
 int main(int argc, char *argv[], char **env)
-{    
-    processOptions(argc, argv);             // 处理命令行参数
+{   
+    processOptions(argc, argv);                     // 处理命令行参数
     //变量定义
+    int source_type;              //源选择函数
+    cv::VideoCapture capture;         //视频源声明
     //初始化预处理函数对象
-    Preprocess g_preprocess;    //初始化对象
-    int width_fig, height_fig;      //图像的宽和高
-    Mat g_srcImage, g_processImage, g_highexposure;     //原图像和预处理图像
-    AutoAiming auto_aiming;             //自瞄对象
-    auto_aiming.state = AutoAiming::State::SEARCHING_STATE;     //自瞄吃状态
+    Preprocess g_preprocess;                        //初始化对象
+    int width_fig, height_fig;                      //图像的宽和高
+    cv::Mat g_srcImage, g_processImage, g_highexposure; //原图像和预处理图像
+    AutoAiming auto_aiming(g_srcImage,g_processImage);                         //自瞄对象
+    auto_aiming.state = State::SEARCHING_STATE;     //自瞄初状态
 
-    systemInit();                           //系统初始化
+    capture = systemInit(&source_type);                                   //系统初始化
     if(run_with_can){
-        //发送handshake包
-        for(int i = 0; i < 3; i++){
-        int res = can.canTansfer(handshake);
-        waitKey(500);
-        }
-    	cout<<"Send Can Mes Sucess."<<endl;
-        thread receive(canReceive,&can);                       //开启线程接收数据
-        receive.detach();
+        CanThreadReceieve();
     }
 
     //主程序循环
     while(1)
     {
-        switch(g_source_type)
+        //选择信号源
+        switch(source_type)
         {
         //源为相机
         case SOURCE_CAMERA:
@@ -67,17 +138,18 @@ int main(int argc, char *argv[], char **env)
                 cout << "error:GetImageForRGB:" << setbase(16) << nRet << endl;
 			    break;
             }
-            //成功
+            //读取图像成功
             else
             {
                 //图像大小
+                //每次图像大小一样放在这里确实不妥
 			    width_fig = stInfo.nWidth;
 			    height_fig = stInfo.nHeight;
                 //从存储中读取图像
 			    if (stInfo.enPixelType == PixelType_Gvsp_BGR8_Packed)
 			    {
 				    Mat pImg(height_fig, width_fig, CV_8UC3, pFrameBuf);
-                    g_srcImage = pImg;                      //src图像储存
+                    g_srcImage = pImg;                          //src图像储存
                     g_processImage = g_srcImage.clone();        //预处理图像克隆(看效果决定放置位置)
                     
 			    }
@@ -89,7 +161,7 @@ int main(int argc, char *argv[], char **env)
         case SOURCE_VIDEO:
         {
             //读取视频
-            g_capture.read(g_srcImage);
+            capture.read(g_srcImage);
             break;
         }
         }
@@ -122,63 +194,4 @@ int main(int argc, char *argv[], char **env)
     //退出
     return 0;
 }
-/**
- * @name        void systemInit
- * @author      seafood
- * @par         none
- * @return      null
- * @function    系统初始化,包括源的选择和输入数字特征
- * */
-void systemInit()
-{
-    g_source_type = SOURCE_CAMERA;
-    //输入源选择
-    //默认摄像机哦
-    if(choose_source_button)
-    {
-        cout << "Input 1 for camera, 0 for video" << endl;
-        cin >> g_source_type;
-    }
 
-    if(g_source_type == SOURCE_CAMERA)
-    {
-        //初始化摄像机
-        if( cameraInit() == CAMERA_INIT_SUCCESS)
-        {
-            //cout << "camera init success" << endl;
-            //获取一帧数据的大小
-            MVCC_INTVALUE stIntvalue = {0};
-            nRet = MV_CC_GetIntValue(handle, "PayloadSize", &stIntvalue);
-
-            if (nRet != MV_OK)
-            {
-                printf("Get PayloadSize failed! nRet [%x]\n", nRet);
-            }	
-	        
-            pFrameBuf = (unsigned char*)malloc(nBuffSize);
-
-            //
-            memset(&stInfo, 0, sizeof(MV_FRAME_OUT_INFO_EX));
-        }
-    }
-    else
-    {
-        //源文件地址
-        g_capture.open("material/video/rmvideo.MOV");
-    }
-    //数字样本集采集
-    int count_number=0, filename=0;
-    for(int i = 1; i < 9; i++)//在原例子上，i=0;i<10改成i=1;i<9
-    {
-        for(int j=1;j<4;j++)
-        {
-            //文件名
-            filename=i*10+j;
-            string s = "material/picture/number/" + to_string(filename) + ".png";//to_string(k)：将数值k转化为字符串，返回对应的字符串
-            
-            Mat num_yangben = imread(s,1);          //读取文件
-            //getFeature(num_yangben, yangben_Feature[count_number]);         //获取样本特征
-            count_number++;
-        }
-    }
-}

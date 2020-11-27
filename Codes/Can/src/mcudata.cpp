@@ -1,9 +1,11 @@
-//
-// Created by sjturm on 19-5-17.
-//
-
-#include "canManifold2G.h"
+/*-----------------------------文件--------------------
+*   文件名：    mcudata.cpp
+*   作者：      seafood
+*   功能：      与mcu之间交互函数
+------------------------------------------------------*/
+#include "mcudata.h"
 using namespace std;
+
 /**
  * @name    :canReceive
  * @author  :seafood
@@ -11,8 +13,20 @@ using namespace std;
  * @parm    :CAN类型对象
  * @return  :void
  * *****************/
-void canReceive(Can *pCan) 
+void mcuDataReceive(Can *pCan) 
 {
+    //mcu_data初始化
+    mcu_data={          // 单片机端回传结构体初始化
+            0,              // 当前大云台yaw角度
+            0,              // 当前大云台pitch角度
+            0,              // 当前小云台yaw角度
+            0,              // 当前小云台pitch角度
+            0,              // 子弹速度
+            0,              // 光照强度
+            0,              // 大/小云台工作模式 0x00：大云台直射，小云台全自动  0x01:大云台抛射，小云台全自动
+            0,              // 前4位表示工作状态，后4位表示敌方战车颜色
+            };
+
     char buffer[8];
     int k=0; //计时变量
     while (true) {

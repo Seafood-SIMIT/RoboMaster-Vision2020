@@ -3,12 +3,11 @@
 
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #include "options.h"            //参数选择
 #include "constants.h"          //常数设定
 #include "canManifold2G.h"      //CAN数据
+#include "mcudata.h"
 
 //图像预处理
 class Preprocess
@@ -18,7 +17,5 @@ public:
 private:
     void setParamInit();    //设置参数
     void clearWhiteLight(cv::Mat &g_processImage); //  消除日光影响
-
-
 };
 #endif

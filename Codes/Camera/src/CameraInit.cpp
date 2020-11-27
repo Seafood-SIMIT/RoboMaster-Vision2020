@@ -4,13 +4,6 @@
 *   功能：  摄像头打开设置关闭
 ------------------------------------------------------*/
 #include "CameraInit.h"
-//一帧数据大小
-int nBuffSize = MAX_IMAGE_DATA_SIZE;    
-unsigned char* pFrameBuf = NULL;            //相机位置
-//------------------------全局变量-----------------------
-int nRet  = -1 ;                    //相机状态代码
-void* handle  = NULL ;              //相机用参数
-float fExposureTime=1000;           //曝光时间
 //-------------------------函数区------------------------------
 /**
  * @author      Seafood
@@ -49,6 +42,11 @@ bool PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
 }
 void paraInit()
 {
+    //一帧数据大小
+    nBuffSize = MAX_IMAGE_DATA_SIZE;
+    nRet  = -1 ;                    //相机状态代码
+    handle  = NULL ;              //相机用参数  
+    pFrameBuf = NULL;            //相机位置
     if(mcu_data.env_light > 0 && mcu_data.env_light < 20){
         fExposureTime=1000;
     }

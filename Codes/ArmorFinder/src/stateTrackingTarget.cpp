@@ -5,7 +5,7 @@
 *   功能：  对图片进行通道拆分和腐蚀膨胀以提取出灯条
 ------------------------------------------------------*/
 //-----------------------------头文件引用和命名空间-------------------
-#include "ArmorFinder.h"
+#include "stateTrackingTarget.h"
 using namespace cv;
 using namespace std;
 /**
@@ -15,7 +15,7 @@ using namespace std;
  * @return      bool
  * @function    追踪状态主函数
  * */
-bool AutoAiming::stateTrackingTarget(cv::Mat &srcImage,cv::Mat &processImage) 
+bool StateTrackingTarget::run(cv::Mat &srcImage,cv::Mat &processImage,ArmorBox &target_box, Kalman *kalman_filter,cv::Ptr<cv::Tracker> tracker,int tracking_cnt) 
 {
     //cv的追踪操作
     //位置目标
@@ -23,14 +23,14 @@ bool AutoAiming::stateTrackingTarget(cv::Mat &srcImage,cv::Mat &processImage)
     
     if(!tracker->update(srcImage, pos)){ // 使用KCFTracker进行追踪
         //追踪失败
-        target_box = ArmorBox();
+        //target_box = ArmorBox();
         //LOGW("Track fail!");
         cout<<"Track fail!"<<endl;
         return false;
     }
     //追踪出界
     if((pos & cv::Rect2d(0, 0, srcImage.cols, srcImage.rows)) != pos){
-        target_box = ArmorBox();
+        //target_box = ArmorBox();
         //LOGW("Track out range!");
         cout<<"Track out range!"<<endl;
         return false;
@@ -50,20 +50,21 @@ bool AutoAiming::stateTrackingTarget(cv::Mat &srcImage,cv::Mat &processImage)
     cv::Mat roi_src = srcImage(bigger_rect).clone();
     //cout<<"追踪更新成功"<<tracking_cnt<<endl;
     cv::Mat roi_process = processImage(bigger_rect).clone();
-    ArmorBox box;
     // 在区域内重新搜索。
     //cout<<"box的大小位置x:"<<box.rect.x<<" y:"<<box.rect.y<<endl;
-    if(findArmorBoxTop(roi_src,roi_process,box)) { 
+    if(state_searching_target_tracking.run(roi_src,roi_process)) { 
         // 如果成功获取目标，则利用搜索区域重新更新追踪器
-        target_box = box;
+        target_box = state_searching_target_tracking.armor_boxes[0];
         //将box的坐标转换为在整幅图片的坐标
         target_box.rect.x += bigger_rect.x; //　添加roi偏移量
         target_box.rect.y += bigger_rect.y;
         //灯条坐标转换
+        //此处认为坐标转换只需装甲板坐标即可
+        /*
         for(auto &blob : target_box.light_blobs){
             blob.rect.center.x += bigger_rect.x;
             blob.rect.center.y += bigger_rect.y;
-        }
+        }*/
         //新建卡尔曼追踪模型
         tracker = TrackerKCF::create();
         //追踪初始化
@@ -91,7 +92,7 @@ bool AutoAiming::stateTrackingTarget(cv::Mat &srcImage,cv::Mat &processImage)
     else{
         //sendPosition(kalman_predict_rect,srcImage);
     }
-    showArmorBox("tracker", srcImage, target_box.rect);
+    //showArmorBox("tracker", srcImage, target_box.rect);
     return true;        //返回值为真
     //namedWindow("ROI",0);
     //resizeWindow("ROI",600,400);
